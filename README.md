@@ -1,2 +1,2 @@
 # Domshinggg
-This is a Airline Reservation System web application implemented using the MERN stack.
+This is an Airline Reservation System web application implemented using the MERN stack.
