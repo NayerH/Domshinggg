@@ -1,5 +1,5 @@
 {
-  "name": "acl_tasks",
+  "name": "Domshinggg",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -8,15 +8,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ahmedalaaseif/ACL_Tasks.git"
+    "url": "git+https://github.com/nayerh/Domshinggg.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/ahmedalaaseif/ACL_Tasks/issues"
+    "url": "https://github.com/nayerh/Domshinggg/issues"
   },
-  "homepage": "https://github.com/ahmedalaaseif/ACL_Tasks#readme",
+  "homepage": "https://github.com/nayerh/Domshinggg#readme",
   "dependencies": {
     "body-parser": "^1.19.0",
     "dotenv": "^10.0.0",
