@@ -1,5 +1,6 @@
 //jshint esversion:6
 const mongoose = require('mongoose');
+const passportLocalMongoose = require('passport-local-mongoose');
 const Schema = mongoose.Schema;
 
 const userSchema = new Schema({
@@ -21,6 +22,7 @@ const userSchema = new Schema({
     required: true
   }
 }, { timestamps: true });
+userSchema.plugin(passportLocalMongoose);
 mongoose.models = {};
 const User = mongoose.model('User', userSchema);
 module.exports = User;

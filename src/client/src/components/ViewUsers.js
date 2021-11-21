@@ -19,7 +19,7 @@ componentDidMount(){
     const users = res.data;
     this.setState({users});
   });
-}
+} 
   render() {
 
 
