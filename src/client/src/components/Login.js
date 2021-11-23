@@ -47,7 +47,7 @@ const useStyles = makeStyles((theme) => ({
     marginBottom: '3vw',
   },
   email: {
-    marginLeft: '-23vw',
+    marginLeft: '0vw',
   },
   pass: {
     marginLeft: '0vw',
@@ -111,7 +111,7 @@ export default function Login() {
   const handleSignin = async (e) => {
     e.preventDefault()
     await axios
-      .post('/account/signin', {
+      .post('http://localhost:3000/login', {
         email: email,
         password: password,
       })
@@ -152,8 +152,9 @@ export default function Login() {
             >
               Sign in
             </Typography>
-            <h4 className={classes.email}>Email*</h4>
+
             <form className={classes.form} noValidate>
+              <h4 className={classes.email}>Email*</h4>
               <TextField
                 className={classes['MuiInputBase-input']}
                 variant='outlined'

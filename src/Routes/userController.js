@@ -1,9 +1,16 @@
 //jshint esversion:6
 const User = require('../models/User');
+const passport = require('passport');
+const passportLocalMongoose = require('passport-local-mongoose');
+
+passport.use(User.createStrategy());
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
+
 exports.addUser = (req, res) => {
     const user = new User({
       Name: req.body.Name,
-      Email: req.body.Email,
+      username: req.body.Email,
       isAdmin: req.body.isAdmin,
       password: req.body.password,
     });
@@ -61,3 +68,35 @@ exports.viewUsers = (req, res) => {
         });
 
     };
+
+//LOGIN
+exports.login = (req,res)=>{
+  const user = new User({
+    username: req.body.email,
+    password: req.body.password,
+  });
+  console.log(user);
+  passport.authenticate('local', function(err, user, info) {
+    if (err) {
+      console.log(err);
+      return res.json({message: err});
+    }
+    if (!user) {
+      console.log(info);
+      return res.json({message: "User not found"});
+    }
+    req.logIn(user, function(err) {
+      if (err) {
+        return res.json({message: err});
+      }
+      return res.json(user);
+    });
+  })(req, res);
+// User.register({username:"admin@flightreservation.com", Name:"Adminstrator",isAdmin:true}, "adminpassword", function(err, user) {
+//   if (err) {
+//     console.log(err);
+//   } else {
+//     console.log("DONE" );
+//   }
+// });
+};

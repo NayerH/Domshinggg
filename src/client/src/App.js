@@ -3,7 +3,7 @@ import React, { Component } from 'react'
 import { BrowserRouter as Router, Route } from 'react-router-dom'
 
 import Login from './components/Login'
-// import MainPage from './components/MainPage'
+import MainPage from './components/Login'
 
 class App extends Component {
   render() {
@@ -11,7 +11,7 @@ class App extends Component {
       <Router>
         <div>
           <Route exact path='/' component={Login} />
-          {/* <Route exact path='/home' component={MainPage} /> */}
+          <Route exact path='/home' component={MainPage} />
         </div>
       </Router>
     )
