@@ -25,6 +25,8 @@ const flightSchema = new Schema({
     required: true
   }
 }, { timestamps: true });
+flightSchema.set('toJSON', { virtuals: true });
+flightSchema.set('toObject', { virtuals: true });
 mongoose.models = {};
 const Flight = mongoose.model('Flight', flightSchema);
 module.exports = Flight;

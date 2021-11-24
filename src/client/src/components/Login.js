@@ -21,7 +21,7 @@ function Copyright() {
   return (
     <Typography variant='body2' color='textSecondary' align='center'>
       {'Copyright ©️ '}
-      <Link color='inherit' href='https://www.instagram.com/kaos.eg/'>
+      <Link color='inherit' href='https://www.instagram.com'>
         Domshing
       </Link>{' '}
       {new Date().getFullYear()}
@@ -93,6 +93,7 @@ export default function Login() {
   const [password, setPassword] = useState('')
   const [errorMessage, setError] = useState('')
   const [open, setOpen] = React.useState(false)
+  const headers = window.localStorage.getItem('token')
 
   const handleClose = (event, reason) => {
     if (reason === 'clickaway') {
@@ -114,7 +115,13 @@ export default function Login() {
       .post('http://localhost:3000/login', {
         email: email,
         password: password,
-      })
+      },
+      {
+        headers: {
+          token: headers,
+        },
+      }
+    )
       .then((res) => {
         console.log(res)
         if (res.data.message) {
@@ -128,8 +135,8 @@ export default function Login() {
           return
         }
 
-        // window.localStorage.setItem('token', res.headers.authtoken)
-        // window.localStorage.setItem('name', res.headers.name)
+        window.localStorage.setItem('token', res.headers.authtoken)
+        window.localStorage.setItem('name', res.headers.name)
 
         history.push('/home')
       })

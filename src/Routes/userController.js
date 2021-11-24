@@ -1,11 +1,13 @@
-//jshint esversion:6
+//jshint esversion:8
 const User = require('../models/User');
-const passport = require('passport');
-const passportLocalMongoose = require('passport-local-mongoose');
+const jwt = require('jsonwebtoken');
+const bcrypt = require('bcrypt');
+// const passport = require('passport');
+// const passportLocalMongoose = require('passport-local-mongoose');
 
-passport.use(User.createStrategy());
-passport.serializeUser(User.serializeUser());
-passport.deserializeUser(User.deserializeUser());
+// passport.use(User.createStrategy());
+// passport.serializeUser(User.serializeUser());
+// passport.deserializeUser(User.deserializeUser());
 
 exports.addUser = (req, res) => {
     const user = new User({
@@ -70,33 +72,110 @@ exports.viewUsers = (req, res) => {
     };
 
 //LOGIN
-exports.login = (req,res)=>{
-  const user = new User({
-    username: req.body.email,
-    password: req.body.password,
-  });
-  console.log(user);
-  passport.authenticate('local', function(err, user, info) {
-    if (err) {
-      console.log(err);
-      return res.json({message: err});
+exports.login = async (req, res) => {
+  const email = req.body.email;
+  const password = req.body.password;
+  console.log(process.env.TOKEN_SECRET);
+  try {
+    let user = await User.findOne({ email });
+    if (user) {
+
+      var result = bcrypt.compareSync(password, user.password);
+
+      if (result) {
+        const isAdmin = user.isAdmin;
+        const token = jwt.sign(
+          {
+            email: user.email,
+            id: user._id,
+            // name: user.firstName,
+          },
+          process.env.TOKEN_SECRET,
+          {
+            expiresIn: '5h',
+          }
+        );
+
+        res.setHeader('authToken', token);
+        res.setHeader('isAdmin', isAdmin);
+        return res.json({
+          user,
+        });
+      } else {
+        return res.json({ message: 'wrong password' });
+      }
     }
     if (!user) {
-      console.log(info);
-      return res.json({message: "User not found"});
+      return res.json({
+        statusCode: 0,
+        message: 'email does not exist, please sign up',
+      });
     }
-    req.logIn(user, function(err) {
-      if (err) {
-        return res.json({message: err});
-      }
-      return res.json(user);
+  } catch (exception) {
+    console.log(exception);
+    return res.json({
+      statusCode: 1,
+      error: 'exception',
     });
-  })(req, res);
-// User.register({username:"admin@flightreservation.com", Name:"Adminstrator",isAdmin:true}, "adminpassword", function(err, user) {
-//   if (err) {
-//     console.log(err);
-//   } else {
-//     console.log("DONE" );
-//   }
-// });
+  }
+};
+
+exports.logout = (req, res) => {
+  try {
+    const token = req.headers.token;
+    console.log(token);
+    jwt.verify(token, process.env.TOKEN_SECRET);
+    return res.json({
+      status: 0,
+      message: 'Success',
+    });
+  } catch (err) {
+    console.log(err);
+    return res.json({
+      status: 1,
+      message: 'Error',
+    });
+  }
+};
+
+exports.signup = async (req, res) => {
+  // const { email, password} = req.body;
+let user = false;
+console.log("METHOD ACTIVE");
+  try {
+    // let user = await User.findOne({
+    //   email,
+    // });
+    if (user) {
+      return res.json({
+        statusCode: 0,
+        message: 'email already exists, please sign in',
+      });
+    } else {
+      var newUser = new User({
+        username: "admin@flightreservation.com",
+        Name: "Admin",
+        password: "adminpassword",
+        isAdmin: true
+      });
+      newUser.password = bcrypt.hashSync("adminpassword", 10);
+      newUser.save(function (err, user) {
+        if (err) {
+          return (res.status = (400).send({
+            message: err,
+          }));
+        } else {
+          // user.password = undefined;
+          return res.json(user);
+        }
+      });
+    }
+  } catch (err) {
+    if (err) {
+      return res.json({
+        statusCode: 1,
+        error: 'error caught ',
+      });
+    }
+  }
 };

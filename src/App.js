@@ -4,20 +4,25 @@ require('dotenv').config();
 const express = require("express");
 const mongoose = require('mongoose');
 const session = require('express-session');
-const passport = require('passport');
-const passportLocalMongoose = require('passport-local-mongoose');
+var cors = require('cors');
+const JWT = require('jsonwebtoken');
+const bcrypt = require('bcrypt');
+// const passport = require('passport');
+// const passportLocalMongoose = require('passport-local-mongoose');
 const userController = require('./Routes/userController');
 const flightController = require('./Routes/flightController');
 const MongoURI =  "mongodb+srv://toukhing:" + process.env.DBPASSWORD + "@cluster0.cam3d.mongodb.net/myFirstDatabase?retryWrites=true&w=majority" ;
 
 //App variables
 const app = express();
+app.use(express.static("public"));
 const port = process.env.PORT || "3000";
 const User = require('./models/User');
 const Flight = require('./models/Flight');
 // console.log(MongoURI);
 // #Importing the userController
 
+app.use(cors({ exposedHeaders: ['authToken', 'name'] }));
 app.use(express.urlencoded({extended: true}));
 app.use(express.json());
  // To parse the incoming requests with JSON payloads// configurations
@@ -26,11 +31,25 @@ mongoose.connect(MongoURI, { useNewUrlParser: true, useUnifiedTopology: true })
 .then(result =>console.log("MongoDB is now connected") )
 .catch(err => console.log(err));
 
-app.use(session({
-  secret: process.env.PASSPORT_SECRET,
-  resave: false,
-  saveUninitialized: false
-}));
+// app.use(function (req, res, next) {
+//   console.log(req.headers.token);
+//   JWT.verify(
+//     req.headers.token,
+//     process.env.TOKEN_SECRET,
+//     function (err, decodedToken) {
+//       if (err) {
+//         /* handle token err */
+//         console.log(err);
+//         return res.json({
+//           message: 'authorization error',
+//         });
+//       } else {
+//         req.userId = decodedToken.id; // Add to req object
+//         next();
+//       }
+//     }
+//   );
+// });
 app.use(function (req, res, next) {
 
     // Website you wish to allow to connect
@@ -49,14 +68,15 @@ app.use(function (req, res, next) {
     // Pass to next layer of middleware
     next();
 });
-app.use(passport.initialize());
-app.use(passport.session());
 
-passport.use(User.createStrategy());
 
-passport.serializeUser(User.serializeUser());
-passport.deserializeUser(User.deserializeUser());
-
+// passport.use(User.createStrategy());
+//
+// passport.serializeUser(User.serializeUser());
+// passport.deserializeUser(User.deserializeUser());
+//
+// app.use(passport.initialize());
+// app.use(passport.session());
 
 // #Routing to usercontroller here
 
@@ -67,6 +87,7 @@ app.put('/update-user/:id',userController.updateUser);
 app.delete('/delete-user/:id',userController.deleteUser);
 
 app.get('/add-all-flights', flightController.addFlight);
+// app.get('/signup', userController.signup);
 
 app.post("/login", userController.login);
 
