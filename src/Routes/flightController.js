@@ -19,7 +19,9 @@ exports.addFlight = (req, res) => {
   //   }
   // );
   // res.send(200);
-    const flight = new Flight(req.body);
+    const flight = new Flight({
+      
+    });
 
     flight.save()
       .then(result => {
