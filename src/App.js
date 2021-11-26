@@ -19,7 +19,7 @@ app.use(express.static("public"));
 const port = process.env.PORT || "3000";
 const User = require('./models/User');
 const Flight = require('./models/Flight');
-// console.log(MongoURI);
+console.log(MongoURI);
 // #Importing the userController
 
 app.use(cors({ exposedHeaders: ['authToken', 'name'] }));
@@ -90,6 +90,7 @@ app.get('/add-all-flights', flightController.addFlight);
 // app.get('/signup', userController.signup);
 
 app.post("/login", userController.login);
+app.post("/logout", userController.logout);
 
 // Starting server
 app.listen(port, () => {

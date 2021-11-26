@@ -3,9 +3,14 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const flightSchema = new Schema({
+  FlightNumber: {
+    type: Number,
+    required: true,
+    unique: true
+  },
   From: {
     type: String,
-    required: true,
+    required: true
   },
   To: {
     type: String,
@@ -13,17 +18,24 @@ const flightSchema = new Schema({
   },
   FlightDate: {
     type: Date,
-    required: true,
+    required: true
   },
-  Cabin: {
-    type: String,
-    required: true,
-    enum: ['Economy','Business','First']
+  ArrivalTime: {
+    type: Date,
+    required: true
   },
-  SeatsAvailable: {
+  DepartureTime: {
+    type: Date,
+    required: true
+  },
+  BusinessNumOfSeats: {
     type: Number,
     required: true
-  }
+  },
+  EconomyNumOfSeats: {
+    type: Number,
+    required: true
+  },
 }, { timestamps: true });
 flightSchema.set('toJSON', { virtuals: true });
 flightSchema.set('toObject', { virtuals: true });

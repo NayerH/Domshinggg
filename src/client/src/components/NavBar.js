@@ -94,7 +94,7 @@ export default function NavBar(props) {
   const handleClose = () => {
     setAnchorEl(null)
   }
-
+  const headers = window.localStorage.getItem('token')
   const toggleDrawer = (anchor, open) => (event) => {
     if (
       event.type === 'keydown' &&
@@ -147,23 +147,36 @@ export default function NavBar(props) {
     </Box>
   )
 
-  useEffect(() => {
-    if (type === false) {
-      axios
-        .post('http://localhost:5000/product/viewAllProducts', {}, {})
-        .then((res) => {
-          setProductsArray(res.data.displayedProducts)
-          props.setData(res.data.displayedProducts)
-        })
-        .catch((error) => {
-          console.log(error)
-        })
-    }
-  }, [type])
+  // useEffect(() => {
+  //   if (type === false) {
+  //     axios
+  //       .post('http://localhost:5000/product/viewAllProducts', {}, {})
+  //       .then((res) => {
+  //         setProductsArray(res.data.displayedProducts)
+  //         props.setData(res.data.displayedProducts)
+  //       })
+  //       .catch((error) => {
+  //         console.log(error)
+  //       })
+  //   }
+  // }, [type])
 
-  const signout = () => {
-    history.push('/')
-    window.localStorage.setItem('token', 'undefined')
+  const signout = async () => {
+
+    await axios.post("http://localhost:3000/logout",{},
+    {
+      headers: {
+        token: headers,
+      },
+    }).then( (res) => {
+      if(res.data.status === 0){
+        window.localStorage.setItem('token', 'undefined')
+        history.push('/')
+      } else {
+        //DISPLAY ERROR
+      }
+    })
+
   }
   const classes = useStyles()
   const handleHome = (e) => {

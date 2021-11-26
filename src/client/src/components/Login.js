@@ -138,7 +138,7 @@ export default function Login() {
         window.localStorage.setItem('token', res.headers.authtoken)
         window.localStorage.setItem('name', res.headers.name)
 
-        history.push('/home')
+        history.push('/flight')
       })
       .catch((err) => {
         console.log(err)

@@ -13,6 +13,7 @@ import TextField from '@mui/material/TextField'
 import LocalizationProvider from '@mui/lab/LocalizationProvider'
 import DatePicker from '@mui/lab/DatePicker'
 import Stack from '@mui/material/Stack'
+import { useHistory } from 'react-router-dom'
 
 const useStyles = makeStyles({
   root: {
@@ -36,6 +37,7 @@ export default function AddFlight() {
   const classes = useStyles()
   const [value, setValue] = React.useState(null)
   const headers = window.localStorage.getItem('token')
+
   const [change, setChange] = React.useState(false)
   const [flightsArray, setFlightsArray] = React.useState([])
   const [error, setError] = React.useState('')
@@ -46,7 +48,7 @@ export default function AddFlight() {
   const [cabin, setCabin] = React.useState('')
   const [fNum, setFNum] = React.useState('')
   const [fDate, setFDate] = React.useState('')
-
+  const history = useHistory()
   const handleChangeTo = (event) => {
     setTo(event.target.value)
   }
@@ -73,22 +75,28 @@ export default function AddFlight() {
   }
 
   useEffect(() => {
-    axios
-      .post(
-        'http://localhost:5000/flight/viewAllFlights',
-        {},
-        {
-          headers: {
-            token: headers,
-          },
-        }
-      )
-      .then((res) => {
-        setFlightsArray(res.data.displayedFlights)
-      })
-      .catch((error) => {
-        console.log(error)
-      })
+
+    if (window.localStorage.getItem('token') === 'undefined') {
+      console.log('its null')
+      history.push('/')
+    } else {
+      axios
+        .post(
+          'http://localhost:5000/flight/viewAllFlights',
+          {},
+          {
+            headers: {
+              token: headers,
+            },
+          }
+        )
+        .then((res) => {
+          setFlightsArray(res.data.displayedFlights)
+        })
+        .catch((error) => {
+          console.log(error)
+        })
+    }
   }, [change])
 
   const handleSearch = async (from, to, cabin, fNum, fDate) => {

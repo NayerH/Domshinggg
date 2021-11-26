@@ -75,37 +75,46 @@ exports.viewUsers = (req, res) => {
 exports.login = async (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
-  console.log(process.env.TOKEN_SECRET);
+
+  // console.log(process.env.TOKEN_SECRET);
   try {
-    let user = await User.findOne({ email });
-    if (user) {
+    let user = await User.findOne({username: email})
+    .then( (user) => {
+      // console.log(user);
+      if (user) {
+        // console.log(user.password);
+        // console.log(password);
 
-      var result = bcrypt.compareSync(password, user.password);
+        var result = bcrypt.compareSync(password, user.password);
 
-      if (result) {
-        const isAdmin = user.isAdmin;
-        const token = jwt.sign(
-          {
-            email: user.email,
-            id: user._id,
-            // name: user.firstName,
-          },
-          process.env.TOKEN_SECRET,
-          {
-            expiresIn: '5h',
-          }
-        );
+        if (result) {
+          const isAdmin = user.isAdmin;
+          const token = jwt.sign(
+            {
+              email: user.email,
+              id: user._id,
+              // name: user.firstName,
+            },
+            process.env.TOKEN_SECRET,
+            {
+              expiresIn: '5h',
+            }
+          );
 
-        res.setHeader('authToken', token);
-        res.setHeader('isAdmin', isAdmin);
-        return res.json({
-          user,
-        });
-      } else {
-        return res.json({ message: 'wrong password' });
+          res.setHeader('authToken', token);
+          res.setHeader('isAdmin', isAdmin);
+          return res.json({
+            user,
+          });
+        } else {
+          return res.json({ message: 'wrong password' });
+        }
       }
-    }
+    });
+
+
     if (!user) {
+      console.log("no user");
       return res.json({
         statusCode: 0,
         message: 'email does not exist, please sign up',
@@ -120,10 +129,10 @@ exports.login = async (req, res) => {
   }
 };
 
-exports.logout = (req, res) => {
+exports.logout = async (req, res) => {
   try {
     const token = req.headers.token;
-    console.log(token);
+    // console.log(token);
     jwt.verify(token, process.env.TOKEN_SECRET);
     return res.json({
       status: 0,

@@ -3,7 +3,6 @@ import React, { Component } from 'react'
 import { BrowserRouter as Router, Route } from 'react-router-dom'
 
 import Login from './components/Login'
-import MainPage from './components/Login'
 import AddFlight from './components/AddFlight'
 
 class App extends Component {
@@ -12,7 +11,6 @@ class App extends Component {
       <Router>
         <div>
           <Route exact path='/' component={Login} />
-          <Route exact path='/home' component={MainPage} />
           <Route exact path='/flight' component={AddFlight} />
         </div>
       </Router>
