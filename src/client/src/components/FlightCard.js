@@ -80,11 +80,14 @@ export default function FlightCard(props) {
     }
   }, [])
   const classes = useStyles()
-  const [from, setFrom] = React.useState(props.from || '')
+  const [cityFrom, setCityFrom] = React.useState(props.cityFrom || '')
   const [to, setTo] = React.useState(props.to || '')
   const [fDate, setFDate] = React.useState(props.fDate || '')
-  const [cabin, setCabin] = React.useState(props.cabin || '')
   const [fNum, setFNum] = React.useState(props.fNum || '')
+  const [arrTime, setArrTime] = React.useState(props.arrTime || '')
+  const [depTime, setDepTime] = React.useState(props.depTime || '')
+  const [busSeats, setBusSeats] = React.useState(props.busSeats || '')
+  const [ecoSeats, setEcoSeats] = React.useState(props.ecoSeats || '')
 
   const [id, setId] = React.useState(-1)
   const [edit, setEdit] = React.useState(false)
@@ -113,8 +116,8 @@ export default function FlightCard(props) {
     setOpen(false)
   }
 
-  const handleChangeFrom = (event) => {
-    setFrom(event.target.value)
+  const handleChangeCityFrom = (event) => {
+    setCityFrom(event.target.value)
   }
   const handleChangeTo = (event) => {
     setTo(event.target.value)
@@ -122,8 +125,17 @@ export default function FlightCard(props) {
   const handleChangeFDate = (event) => {
     setFDate(event.target.value)
   }
-  const handleChangeCabin = (event) => {
-    setCabin(event.target.value)
+  const handleChangeArrTime = (event) => {
+    setArrTime(event.target.value)
+  }
+  const handleChangeDepTime = (event) => {
+    setDepTime(event.target.value)
+  }
+  const handleChangeBusSeats = (event) => {
+    setBusSeats(event.target.value)
+  }
+  const handleChangeEcoSeats = (event) => {
+    setEcoSeats(event.target.value)
   }
   const handleChangeFNum = (event) => {
     setFNum(event.target.value)
@@ -131,15 +143,18 @@ export default function FlightCard(props) {
 
   const headers = window.localStorage.getItem('token')
 
-  const handleEditFlightCard = async (from, to, cabin, fNum, fDate) => {
+  const handleEditFlightCard = async (cityFrom, to, fNum, fDate,arrTime,depTime,busSeats,ecoSeats) => {
     const res = await axios.post(
       'http://localhost:5000/flight/editFlight',
       {
-        from: from,
+        cityFrom: cityFrom,
         to: to,
-        cabin: cabin,
         fNum: fNum,
         fDate: fDate,
+        arrTime:arrTime,
+        depTime:depTime,
+        busSeats:busSeats,
+        ecoSeats:ecoSeats
       },
       {
         headers: {
@@ -172,7 +187,7 @@ export default function FlightCard(props) {
         variant='contained'
         color='secondary'
         onClick={() => {
-          props.handleDeleteFlightCard(props.from)
+          props.handleDeleteFlightCard(props.cityFrom)
         }}
       >
         yes
@@ -209,11 +224,11 @@ export default function FlightCard(props) {
                           <TextField
                             required
                             disabled={!props.new && !edit}
-                            className={classes.from}
+                            className={classes.cityFrom}
                             id='standard-password-input'
                             label='From'
-                            value={from}
-                            onChange={handleChangeFrom}
+                            value={cityFrom}
+                            onChange={handleChangeCityFrom}
                           />
                           <TextField
                             required
@@ -228,11 +243,38 @@ export default function FlightCard(props) {
                           <TextField
                             required
                             disabled={!props.new && !edit}
-                            className={classes.cabin}
+                            className={classes.arrTime}
                             id='standard-password-input'
-                            label='Cabin'
-                            value={cabin}
-                            onChange={handleChangeCabin}
+                            label='Arrival Time'
+                            value={arrTime}
+                            onChange={handleChangeArrTime}
+                          />
+                          <TextField
+                            required
+                            disabled={!props.new && !edit}
+                            className={classes.depTime}
+                            id='standard-password-input'
+                            label='Departure Time'
+                            value={depTime}
+                            onChange={handleChangeDepTime}
+                          />
+                          <TextField
+                            required
+                            disabled={!props.new && !edit}
+                            className={classes.busSeats}
+                            id='standard-password-input'
+                            label='Business Seats'
+                            value={busSeats}
+                            onChange={handleChangeBusSeats}
+                          />
+                          <TextField
+                            required
+                            disabled={!props.new && !edit}
+                            className={classes.ecoSeats}
+                            id='standard-password-input'
+                            label='Economy Seats'
+                            value={ecoSeats}
+                            onChange={handleChangeEcoSeats}
                           />
                           <TextField
                             required
@@ -262,31 +304,44 @@ export default function FlightCard(props) {
                             disabled={!props.new && !edit}
                             onClick={() => {
                               if (props.new) {
-                                props.handleAddFlightCard(
-                                  from,
-                                  to,
-                                  fDate,
-                                  cabin,
-                                  fNum
-                                )
-                                setFrom('')
+                                props.handleAddFlightCard({
+                                  cityFrom:cityFrom,
+                                  to: to,
+                                  fNum: fNum,
+                                  fDate: fDate,
+                                  arrTime:arrTime,
+                                  depTime:depTime,
+                                  busSeats:busSeats,
+                                  ecoSeats:ecoSeats
+                                })
+                                setCityFrom('')
                                 setTo('')
                                 setFDate('')
-                                setCabin('')
                                 setFNum('')
+                                setArrTime('')
+                                setDepTime('')
+                                setBusSeats('')
+                                setEcoSeats('')
+
                               } else {
-                                handleEditFlightCard(
-                                  from,
-                                  to,
-                                  cabin,
-                                  fNum,
-                                  fDate
-                                )
-                                setFrom(from)
+                                handleEditFlightCard({
+                                  cityFrom:cityFrom,
+                                  to: to,
+                                  fNum: fNum,
+                                  fDate: fDate,
+                                  arrTime:arrTime,
+                                  depTime:depTime,
+                                  busSeats:busSeats,
+                                  ecoSeats:ecoSeats
+                                })
+                                setCityFrom(cityFrom)
                                 setTo(to)
                                 setFDate(fDate)
-                                setCabin(cabin)
                                 setFNum(fNum)
+                                setArrTime(arrTime)
+                                setDepTime(depTime)
+                                setBusSeats(busSeats)
+                                setEcoSeats(ecoSeats)
                                 setId(id)
                                 setEdit(false)
                               }

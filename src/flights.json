@@ -1,296 +1,142 @@
 [
  {
+   "FlightNumber": 1,
    "From": "LAX",
    "To": "JFK",
-   "FlightDate": "12-01-22",
-   "Cabin": "Economy",
-   "SeatsAvailable": 20
+   "FlightDate": "2022-01-12",
+   "ArrivalTime": "23:00",
+   "DepartureTime": "12:30",
+   "BusinessNumOfSeats": 3,
+   "EconomyNumOfSeats": 10
  },
  {
-   "From": "LAX",
-   "To": "JFK",
-   "FlightDate": "12-01-22",
-   "Cabin": "Business",
-   "SeatsAvailable": 10
- },
- {
-   "From": "LAX",
-   "To": "JFK",
-   "FlightDate": "12-01-22",
-   "Cabin": "First",
-   "SeatsAvailable": 6
- },
- {
+   "FlightNumber": 2,
    "From": "JFK",
    "To": "LAX",
-   "FlightDate": "22-01-22",
-   "Cabin": "Economy",
-   "SeatsAvailable": 30
+   "FlightDate": "2022-01-22",
+   "ArrivalTime": "12:30",
+   "DepartureTime": "14:20",
+   "BusinessNumOfSeats": 54,
+   "EconomyNumOfSeats": 103
  },
  {
-   "From": "JFK",
-   "To": "LAX",
-   "FlightDate": "22-01-22",
-   "Cabin": "Business",
-   "SeatsAvailable": 15
- },
- {
-   "From": "JFK",
-   "To": "LAX",
-   "FlightDate": "22-01-22",
-   "Cabin": "First",
-   "SeatsAvailable": 16
- },
- {
+   "FlightNumber": 3,
    "From": "JFK",
    "To": "LHR",
-   "FlightDate": "21-02-22",
-   "Cabin": "Economy",
-   "SeatsAvailable": 22
+   "FlightDate": "2022-02-21",
+   "ArrivalTime": "14:20",
+   "DepartureTime": "16:03",
+   "BusinessNumOfSeats": 34,
+   "EconomyNumOfSeats": 32
  },
  {
-   "From": "JFK",
-   "To": "LHR",
-   "FlightDate": "21-02-22",
-   "Cabin": "Business",
-   "SeatsAvailable": 2
- },
- {
-   "From": "JFK",
-   "To": "LHR",
-   "FlightDate": "21-02-22",
-   "Cabin": "First",
-   "SeatsAvailable": 5
- },
- {
+   "FlightNumber": 4,
    "From": "LHR",
    "To": "JFK",
-   "FlightDate": "06-03-22",
-   "Cabin": "Economy",
-   "SeatsAvailable": 43
+   "FlightDate": "2022-03-06",
+   "ArrivalTime": "16:03",
+   "DepartureTime": "23:00",
+   "BusinessNumOfSeats": 6,
+   "EconomyNumOfSeats": 39
  },
  {
-   "From": "LHR",
-   "To": "JFK",
-   "FlightDate": "06-03-22",
-   "Cabin": "Business",
-   "SeatsAvailable": 26
- },
- {
-   "From": "LHR",
-   "To": "JFK",
-   "FlightDate": "06-03-22",
-   "Cabin": "First",
-   "SeatsAvailable": 16
- },
- {
+   "FlightNumber": 5,
    "From": "CAI",
    "To": "DXB",
-   "FlightDate": "10-04-22",
-   "Cabin": "Economy",
-   "SeatsAvailable": 50
+   "FlightDate": "2022-04-10",
+   "ArrivalTime": "13:05",
+   "DepartureTime": "23:00",
+   "BusinessNumOfSeats": 5,
+   "EconomyNumOfSeats": 49
  },
  {
-   "From": "CAI",
-   "To": "DXB",
-   "FlightDate": "10-04-22",
-   "Cabin": "Business",
-   "SeatsAvailable": 22
- },
- {
-   "From": "CAI",
-   "To": "DXB",
-   "FlightDate": "10-04-22",
-   "Cabin": "First",
-   "SeatsAvailable": 10
- },
- {
+   "FlightNumber": 6,
    "From": "DXB",
    "To": "CAI",
-   "FlightDate": "18-04-22",
-   "Cabin": "Economy",
-   "SeatsAvailable": 50
+   "FlightDate": "2022-04-18",
+   "ArrivalTime": "15:44",
+   "DepartureTime": "23:00",
+   "BusinessNumOfSeats": 87,
+   "EconomyNumOfSeats": 39
  },
  {
-   "From": "DXB",
-   "To": "CAI",
-   "FlightDate": "18-04-22",
-   "Cabin": "Business",
-   "SeatsAvailable": 22
- },
- {
-   "From": "DXB",
-   "To": "CAI",
-   "FlightDate": "18-04-22",
-   "Cabin": "First",
-   "SeatsAvailable": 10
- },
- {
+   "FlightNumber": 7,
    "From": "CDG",
    "To": "MUC",
-   "FlightDate": "25-04-22",
-   "Cabin": "Economy",
-   "SeatsAvailable": 43
+   "FlightDate": "2022-04-25",
+   "ArrivalTime": "16:33",
+   "DepartureTime": "23:00",
+   "BusinessNumOfSeats": 65,
+   "EconomyNumOfSeats": 29
  },
  {
-   "From": "CDG",
-   "To": "MUC",
-   "FlightDate": "25-04-22",
-   "Cabin": "Business",
-   "SeatsAvailable": 26
- },
- {
-   "From": "CDG",
-   "To": "MUC",
-   "FlightDate": "25-04-22",
-   "Cabin": "First",
-   "SeatsAvailable": 16
- },
- {
+   "FlightNumber": 8,
    "From": "MUC",
    "To": "CDG",
-   "FlightDate": "02-05-22",
-   "Cabin": "Economy",
-   "SeatsAvailable": 43
+   "FlightDate": "2022-05-02",
+   "ArrivalTime": "19:00",
+   "DepartureTime": "23:00",
+   "BusinessNumOfSeats": 54,
+   "EconomyNumOfSeats": 24
  },
  {
-   "From": "MUC",
-   "To": "CDG",
-   "FlightDate": "02-05-22",
-   "Cabin": "Business",
-   "SeatsAvailable": 26
- },
- {
-   "From": "MUC",
-   "To": "CDG",
-   "FlightDate": "02-05-22",
-   "Cabin": "First",
-   "SeatsAvailable": 16
- },
- {
+   "FlightNumber": 9,
    "From": "LHR",
    "To": "CDG",
-   "FlightDate": "06-05-22",
-   "Cabin": "Economy",
-   "SeatsAvailable": 30
+   "FlightDate": "2022-05-06",
+   "ArrivalTime": "15:44",
+   "DepartureTime": "23:00",
+   "BusinessNumOfSeats": 43,
+   "EconomyNumOfSeats": 54
  },
  {
-   "From": "LHR",
-   "To": "CDG",
-   "FlightDate": "06-05-22",
-   "Cabin": "Business",
-   "SeatsAvailable": 13
- },
- {
-   "From": "LHR",
-   "To": "CDG",
-   "FlightDate": "06-05-22",
-   "Cabin": "First",
-   "SeatsAvailable": 3
- },
- {
+   "FlightNumber": 10,
    "From": "CDG",
    "To": "LHR",
-   "FlightDate": "17-05-22",
-   "Cabin": "Economy",
-   "SeatsAvailable": 60
+   "FlightDate": "2022-05-17",
+   "ArrivalTime": "13:05",
+   "DepartureTime": "23:00",
+   "BusinessNumOfSeats": 2,
+   "EconomyNumOfSeats": 34
  },
  {
-   "From": "CDG",
-   "To": "LHR",
-   "FlightDate": "17-05-22",
-   "Cabin": "Business",
-   "SeatsAvailable": 16
- },
- {
-   "From": "CDG",
-   "To": "LHR",
-   "FlightDate": "17-05-22",
-   "Cabin": "First",
-   "SeatsAvailable": 16
- },
- {
+   "FlightNumber": 11,
    "From": "CAI",
    "To": "RUH",
-   "FlightDate": "06-06-22",
-   "Cabin": "Economy",
-   "SeatsAvailable": 43
+   "FlightDate": "2022-06-06",
+   "ArrivalTime": "12:30",
+   "DepartureTime": "13:05",
+   "BusinessNumOfSeats": 54,
+   "EconomyNumOfSeats": 54
  },
  {
-   "From": "CAI",
-   "To": "RUH",
-   "FlightDate": "06-06-22",
-   "Cabin": "Business",
-   "SeatsAvailable": 26
- },
- {
-   "From": "CAI",
-   "To": "RUH",
-   "FlightDate": "06-06-22",
-   "Cabin": "First",
-   "SeatsAvailable": 16
- },
- {
+   "FlightNumber": 12,
    "From": "RUH",
    "To": "CAI",
-   "FlightDate": "16-06-22",
-   "Cabin": "Economy",
-   "SeatsAvailable": 22
+   "FlightDate": "2022-06-16",
+   "ArrivalTime": "23:00",
+   "DepartureTime": "12:30",
+   "BusinessNumOfSeats": 65,
+   "EconomyNumOfSeats": 49
  },
  {
-   "From": "RUH",
-   "To": "CAI",
-   "FlightDate": "16-06-22",
-   "Cabin": "Business",
-   "SeatsAvailable": 10
- },
- {
-   "From": "RUH",
-   "To": "CAI",
-   "FlightDate": "16-06-22",
-   "Cabin": "First",
-   "SeatsAvailable": 6
- },
- {
+   "FlightNumber": 13,
    "From": "YYZ",
    "To": "FRA",
-   "FlightDate": "07-07-20",
-   "Cabin": "Economy",
-   "SeatsAvailable": 43
+   "FlightDate": "2020-07-07",
+   "ArrivalTime": "16:03",
+   "DepartureTime": "23:00",
+   "BusinessNumOfSeats": 65,
+   "EconomyNumOfSeats": 49
  },
  {
-   "From": "YYZ",
-   "To": "FRA",
-   "FlightDate": "07-07-20",
-   "Cabin": "Business",
-   "SeatsAvailable": 26
- },
- {
-   "From": "YYZ",
-   "To": "FRA",
-   "FlightDate": "07-07-20",
-   "Cabin": "First",
-   "SeatsAvailable": 16
- },
- {
+   "FlightNumber": 14,
    "From": "FRA",
    "To": "YYZ",
-   "FlightDate": "08-08-22",
-   "Cabin": "Economy",
-   "SeatsAvailable": 43
- },
- {
-   "From": "FRA",
-   "To": "YYZ",
-   "FlightDate": "08-08-22",
-   "Cabin": "Business",
-   "SeatsAvailable": 26
- },
- {
-   "From": "FRA",
-   "To": "YYZ",
-   "FlightDate": "08-08-22",
-   "Cabin": "First",
-   "SeatsAvailable": 16
+   "FlightDate": "2022-08-08",
+   "ArrivalTime": "15:44",
+   "DepartureTime": "23:00",
+   "BusinessNumOfSeats": 54,
+   "EconomyNumOfSeats": 93
  }
 ]

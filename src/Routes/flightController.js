@@ -1,13 +1,23 @@
 //jshint esversion:6
 const Flight = require('../models/Flight');
+const fs = require('file-system');
 exports.addFlight = (req, res) => {
   // Bulk Save for multiple flights from CSV Files
 
   // let rawdata = fs.readFileSync('./flights.json');
   // let flights = JSON.parse(rawdata);
   // flights.forEach( (flightRaw) => {
-  //   let flight = new Flight(flightRaw);
-  //
+  //   let flight = new Flight({
+  //     FlightNumber: flightRaw.FlightNumber,
+  //     From: flightRaw.From,
+  //     To: flightRaw.To,
+  //     FlightDate: new Date(flightRaw.FlightDate),
+  //     ArrivalTime: new Date(flightRaw.FlightDate + "T"+ flightRaw.ArrivalTime+":00.123Z"),
+  //     DepartureTime: new Date(flightRaw.FlightDate + "T"+ flightRaw.DepartureTime+":00.123Z"),
+  //     BusinessNumOfSeats: flightRaw.BusinessNumOfSeats,
+  //     EconomyNumOfSeats: flightRaw.EconomyNumOfSeats,
+  //   });
+  //   console.log(flight);
   //   flight.save()
   //     .then(result => {
   //       // res.send(result);
@@ -20,7 +30,14 @@ exports.addFlight = (req, res) => {
   // );
   // res.send(200);
     const flight = new Flight({
-      
+          FlightNumber: req.body.FlightNumber,
+          From: req.body.From,
+          To: req.body.To,
+          FlightDate: new Date(req.body.FlightDate),
+          ArrivalTime: new Date(req.body.FlightDate + "T"+ req.body.ArrivalTime+":00.123Z"),
+          DepartureTime: new Date(req.body.FlightDate + "T"+ req.body.DepartureTime+":00.123Z"),
+          BusinessNumOfSeats: req.body.BusinessNumOfSeats,
+          EconomyNumOfSeats: req.body.EconomyNumOfSeats,
     });
 
     flight.save()

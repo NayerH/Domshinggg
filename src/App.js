@@ -87,6 +87,7 @@ app.put('/update-user/:id',userController.updateUser);
 app.delete('/delete-user/:id',userController.deleteUser);
 
 app.get('/add-all-flights', flightController.addFlight);
+app.post('/viewAllFlights', flightController.viewFlight);
 // app.get('/signup', userController.signup);
 
 app.post("/login", userController.login);

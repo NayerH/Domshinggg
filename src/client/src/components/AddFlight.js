@@ -43,20 +43,34 @@ export default function AddFlight() {
   const [error, setError] = React.useState('')
   const [open, setOpen] = React.useState(false)
   const [severityState, setSeverityState] = React.useState('')
-  const [to, setTo] = React.useState('')
-  const [from, setFrom] = React.useState('')
-  const [cabin, setCabin] = React.useState('')
+
   const [fNum, setFNum] = React.useState('')
+  const [cityFrom, setCityFrom] = React.useState('')
+  const [to, setTo] = React.useState('')
   const [fDate, setFDate] = React.useState('')
+  const [arrTime, setArrTime] = React.useState('')
+  const [depTime, setDepTime] = React.useState('')
+  const [busSeats, setBusSeats] = React.useState('')
+  const [ecoSeats, setEcoSeats] = React.useState('')
+
   const history = useHistory()
   const handleChangeTo = (event) => {
     setTo(event.target.value)
   }
-  const handleChangeFrom = (event) => {
-    setFrom(event.target.value)
+  const handleChangecityFrom = (event) => {
+    setCityFrom(event.target.value)
   }
-  const handleChangeCabin = (event) => {
-    setCabin(event.target.value)
+  const handleChangeArrTime = (event) => {
+    setArrTime(event.target.value)
+  }
+  const handleChangeDepTime = (event) => {
+    setDepTime(event.target.value)
+  }
+  const handleChangeBusSeats = (event) => {
+    setBusSeats(event.target.value)
+  }
+  const handleChangeEcoSeats = (event) => {
+    setEcoSeats(event.target.value)
   }
   const handleChangeFNum = (event) => {
     setFNum(event.target.value)
@@ -82,7 +96,7 @@ export default function AddFlight() {
     } else {
       axios
         .post(
-          'http://localhost:5000/flight/viewAllFlights',
+          'http://localhost:3000/viewAllFlights',
           {},
           {
             headers: {
@@ -91,7 +105,8 @@ export default function AddFlight() {
           }
         )
         .then((res) => {
-          setFlightsArray(res.data.displayedFlights)
+          setFlightsArray(res.data)
+          // console.log(res.data);
         })
         .catch((error) => {
           console.log(error)
@@ -99,15 +114,18 @@ export default function AddFlight() {
     }
   }, [change])
 
-  const handleSearch = async (from, to, cabin, fNum, fDate) => {
+  const handleSearch = async (cityFrom, to, fNum, fDate,arrTime,depTime,busSeats,ecoSeats) => {
     const res = await axios.post(
       'http://localhost:5000/flight/searchFlight',
       {
-        from: from,
+        cityFrom: cityFrom,
         to: to,
-        cabin: cabin,
         fNum: fNum,
         fDate: fDate,
+        arrTime:arrTime,
+        depTime:depTime,
+        busSeats:busSeats,
+        ecoSeats:ecoSeats
       },
       {
         headers: {
@@ -118,16 +136,19 @@ export default function AddFlight() {
     //IDK
   }
 
-  const handleAddFlightCard = async (from, to, fNum, cabin, fDate) => {
+  const handleAddFlightCard = async (cityFrom, to, fNum, fDate,arrTime,depTime,busSeats,ecoSeats) => {
     console.log('flight added')
     const res = await axios.post(
       'http://localhost:5000/flight/createFlight',
       {
+        cityFrom: cityFrom,
         to: to,
-        from: from,
-        cabin: cabin,
         fNum: fNum,
         fDate: fDate,
+        arrTime:arrTime,
+        depTime:depTime,
+        busSeats:busSeats,
+        ecoSeats:ecoSeats
       },
       {
         headers: {
@@ -159,10 +180,17 @@ export default function AddFlight() {
     console.log('adding', flightsArray)
   }
 
-  const handleDeleteFlightCard = async (to, from, cabin, fDate, fNum) => {
+  const handleDeleteFlightCard = async (cityFrom, to, fNum, fDate,arrTime,depTime,busSeats,ecoSeats) => {
     const res = await axios.post(
       'http://localhost:5000/flight/deleteFlight',
-      { to: to, from: from, cabin: cabin, fNum: fNum, fDate: fDate },
+      { cityFrom: cityFrom,
+      to: to,
+      fNum: fNum,
+      fDate: fDate,
+      arrTime:arrTime,
+      depTime:depTime,
+      busSeats:busSeats,
+      ecoSeats:ecoSeats },
       {
         headers: {
           token: headers,
@@ -194,7 +222,7 @@ export default function AddFlight() {
           <TextField
             className={classes.box}
             id='outlined-basic'
-            onChange={handleChangeFrom}
+            onChange={handleChangecityFrom}
             label='From (e.g Berlin)'
             variant='outlined'
           />
@@ -229,12 +257,39 @@ export default function AddFlight() {
           <TextField
             className={classes.box}
             id='outlined-basic'
-            onChange={handleChangeCabin}
-            label='Cabin'
+            onChange={handleChangeArrTime}
+            label='Arrival Time'
             variant='outlined'
           />
           <br />
           <br />
+          <TextField
+              className={classes.box}
+              id='outlined-basic'
+              onChange={handleChangeDepTime}
+              label='Departure Time'
+              variant='outlined'
+            />
+          <br />
+          <br />
+            <TextField
+              className={classes.box}
+              id='outlined-basic'
+              onChange={handleChangeBusSeats}
+              label='Business Seats'
+              variant='outlined'
+            />
+            <br />
+            <br />
+              <TextField
+                className={classes.box}
+                id='outlined-basic'
+                onChange={handleChangeEcoSeats}
+                label='Economy Seats'
+                variant='outlined'
+              />
+              <br />
+              <br />
           <Button
             variant='contained'
             onClick={() => {
@@ -271,11 +326,14 @@ export default function AddFlight() {
             {flightsArray.map((d) => (
               <FlightCard
                 handleDeleteFlightCard={handleDeleteFlightCard}
-                to={d.to}
-                from={d.from}
-                cabin={d.cabin}
-                fNum={d.fNum}
-                fDate={d.fDate}
+                to={d.To}
+                cityFrom={d.From}
+                fNum={d.FlightNumber}
+                fDate={d.FlightDate}
+                arrTime={d.ArrivalTime}
+                depTime={d.DepartureTime}
+                busSeats={d.BusinessNumOfSeats}
+                ecoSeats={d.EconomyNumOfSeats}
                 id={d._id}
                 new={false}
                 key={d._id}
