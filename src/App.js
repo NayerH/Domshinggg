@@ -11,6 +11,7 @@ const bcrypt = require('bcrypt');
 // const passportLocalMongoose = require('passport-local-mongoose');
 const userController = require('./Routes/userController');
 const flightController = require('./Routes/flightController');
+const bodyParser = require('body-parser');
 const MongoURI =  "mongodb+srv://toukhing:" + process.env.DBPASSWORD + "@cluster0.cam3d.mongodb.net/myFirstDatabase?retryWrites=true&w=majority" ;
 
 //App variables
@@ -23,7 +24,7 @@ console.log(MongoURI);
 // #Importing the userController
 
 app.use(cors({ exposedHeaders: ['authToken', 'name'] }));
-app.use(express.urlencoded({extended: true}));
+app.use(bodyParser.urlencoded({extended: true}));
 app.use(express.json());
  // To parse the incoming requests with JSON payloads// configurations
 // Mongo DB
@@ -88,6 +89,9 @@ app.delete('/delete-user/:id',userController.deleteUser);
 
 app.get('/add-all-flights', flightController.addFlight);
 app.post('/viewAllFlights', flightController.viewFlight);
+app.post('/createFlight', flightController.addFlight);
+app.post('/deleteFlight', flightController.deleteFlight);
+app.post('/editFlight', flightController.updateFlight);
 // app.get('/signup', userController.signup);
 
 app.post("/login", userController.login);

@@ -57,7 +57,7 @@ export default function AddFlight() {
   const handleChangeTo = (event) => {
     setTo(event.target.value)
   }
-  const handleChangecityFrom = (event) => {
+  const handleChangeCityFrom = (event) => {
     setCityFrom(event.target.value)
   }
   const handleChangeArrTime = (event) => {
@@ -116,7 +116,7 @@ export default function AddFlight() {
 
   const handleSearch = async (cityFrom, to, fNum, fDate,arrTime,depTime,busSeats,ecoSeats) => {
     const res = await axios.post(
-      'http://localhost:5000/flight/searchFlight',
+      'http://localhost:3000/searchFlight',
       {
         cityFrom: cityFrom,
         to: to,
@@ -137,12 +137,12 @@ export default function AddFlight() {
   }
 
   const handleAddFlightCard = async (cityFrom, to, fNum, fDate,arrTime,depTime,busSeats,ecoSeats) => {
-    console.log('flight added')
+
     const res = await axios.post(
-      'http://localhost:5000/flight/createFlight',
+      'http://localhost:3000/createFlight',
       {
-        cityFrom: cityFrom,
         to: to,
+        cityFrom: cityFrom,
         fNum: fNum,
         fDate: fDate,
         arrTime:arrTime,
@@ -155,42 +155,44 @@ export default function AddFlight() {
           token: headers,
         },
       }
-    )
-    console.log(res.config.data)
-
-    if (res.data.error) {
-      setSeverityState('warning')
-      setError(res.data.error)
-      handleClick()
-      setOpen(true)
-    }
-    if (res.data.message) {
-      setSeverityState('success')
-      setError('Flight Added Succesfuly')
-      handleClick()
-      setOpen(true)
-    }
-
-    if (res.data.statusCode === 0) {
-      setChange((prev) => !prev)
-    }
-    if (res.data.statusCode === 1) {
-      console.log(res.data.error)
-    }
-    console.log('adding', flightsArray)
+    ).then((res) => {
+      console.log(res.data);
+      console.log('flight added')
+      if (res.data.error) {
+        setSeverityState('warning')
+        setError(res.data.error)
+        handleClick()
+        setOpen(true)
+      }
+      if (res.data.message) {
+        setSeverityState('success')
+        setError('Flight Added Succesfuly')
+        handleClick()
+        setOpen(true)
+      }
+      console.log(res);
+      if (!res.error && !res.data.error) {
+        setChange((prev) => !prev)
+        console.log('adding', flightsArray)
+      } else {
+        console.log(res.data.error)
+      }
+      // var flArray = this.state.flightsArray;
+      // flArray.add(res.data)
+      // setFlightsArray(flArray)
+      // console.log(res.data);
+    })
+    .catch((error) => {
+      console.log(error)
+    })
   }
 
-  const handleDeleteFlightCard = async (cityFrom, to, fNum, fDate,arrTime,depTime,busSeats,ecoSeats) => {
+  const handleDeleteFlightCard = async (id) => {
     const res = await axios.post(
-      'http://localhost:5000/flight/deleteFlight',
-      { cityFrom: cityFrom,
-      to: to,
-      fNum: fNum,
-      fDate: fDate,
-      arrTime:arrTime,
-      depTime:depTime,
-      busSeats:busSeats,
-      ecoSeats:ecoSeats },
+      'http://localhost:3000/deleteFlight',
+      {
+        id:id
+      },
       {
         headers: {
           token: headers,
@@ -222,7 +224,7 @@ export default function AddFlight() {
           <TextField
             className={classes.box}
             id='outlined-basic'
-            onChange={handleChangecityFrom}
+            onChange={handleChangeCityFrom}
             label='From (e.g Berlin)'
             variant='outlined'
           />
@@ -329,9 +331,9 @@ export default function AddFlight() {
                 to={d.To}
                 cityFrom={d.From}
                 fNum={d.FlightNumber}
-                fDate={d.FlightDate}
-                arrTime={d.ArrivalTime}
-                depTime={d.DepartureTime}
+                fDate={d.FlightDate.toString().substring(0,10)}
+                arrTime={d.ArrivalTime.toString().substring(11,19)}
+                depTime={d.DepartureTime.toString().substring(11,19)}
                 busSeats={d.BusinessNumOfSeats}
                 ecoSeats={d.EconomyNumOfSeats}
                 id={d._id}

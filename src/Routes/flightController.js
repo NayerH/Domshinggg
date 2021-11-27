@@ -29,20 +29,21 @@ exports.addFlight = (req, res) => {
   //   }
   // );
   // res.send(200);
+  console.log(req.body);
     const flight = new Flight({
-          FlightNumber: req.body.FlightNumber,
-          From: req.body.From,
-          To: req.body.To,
-          FlightDate: new Date(req.body.FlightDate),
-          ArrivalTime: new Date(req.body.FlightDate + "T"+ req.body.ArrivalTime+":00.123Z"),
-          DepartureTime: new Date(req.body.FlightDate + "T"+ req.body.DepartureTime+":00.123Z"),
-          BusinessNumOfSeats: req.body.BusinessNumOfSeats,
-          EconomyNumOfSeats: req.body.EconomyNumOfSeats,
+          FlightNumber: req.body.cityFrom.fNum,
+          From: req.body.cityFrom.cityFrom,
+          To: req.body.cityFrom.to,
+          FlightDate: new Date(req.body.cityFrom.fDate),
+          ArrivalTime: new Date(req.body.cityFrom.fDate + "T"+ req.body.cityFrom.arrTime+":00.123Z"),
+          DepartureTime: new Date(req.body.cityFrom.fDate + "T"+ req.body.cityFrom.depTime+":00.123Z"),
+          BusinessNumOfSeats: req.body.cityFrom.busSeats,
+          EconomyNumOfSeats: req.body.cityFrom.ecoSeats,
     });
-
+    console.log(flight);
     flight.save()
       .then(result => {
-        res.send(result);
+        res.status(200).send(result);
         console.log("flight added");
       })
       .catch(err => {
@@ -72,7 +73,18 @@ exports.viewFlight = (req, res) => {
     };
 
     exports.updateFlight = (req,res)=>{
-      Flight.findByIdAndUpdate(req.params.id,req.body).then(result =>{
+      console.log(req.body.data);
+      const flight = {
+            FlightNumber: req.body.data.fNum,
+            From: req.body.data.cityFrom,
+            To: req.body.data.to,
+            FlightDate: new Date(req.body.data.fDate),
+            ArrivalTime: new Date(req.body.data.fDate + "T"+ req.body.data.arrTime+".123Z"),
+            DepartureTime: new Date(req.body.data.fDate + "T"+ req.body.data.depTime+".123Z"),
+            BusinessNumOfSeats: req.body.data.busSeats,
+            EconomyNumOfSeats: req.body.data.ecoSeats,
+      };
+      Flight.findByIdAndUpdate(req.body.data.id,flight).then(result =>{
 
           res.status(200).send("Flight updated ");
           console.log('The Flight is Updated successfully!');
@@ -84,7 +96,8 @@ exports.viewFlight = (req, res) => {
 
     //Deleting an existing Flight
     exports.deleteFlight = (req,res)=>{
-      Flight.findByIdAndRemove(req.params.id).then(result =>{
+      console.log(req.body);
+      Flight.findByIdAndRemove(req.body.id).then(result =>{
 
           res.status(200).send("Flight Deleted ");
           console.log("The Flight is deleted successfully !");

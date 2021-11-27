@@ -143,18 +143,11 @@ export default function FlightCard(props) {
 
   const headers = window.localStorage.getItem('token')
 
-  const handleEditFlightCard = async (cityFrom, to, fNum, fDate,arrTime,depTime,busSeats,ecoSeats) => {
+  const handleEditFlightCard = async (data) => {
     const res = await axios.post(
-      'http://localhost:5000/flight/editFlight',
+      'http://localhost:3000/editFlight',
       {
-        cityFrom: cityFrom,
-        to: to,
-        fNum: fNum,
-        fDate: fDate,
-        arrTime:arrTime,
-        depTime:depTime,
-        busSeats:busSeats,
-        ecoSeats:ecoSeats
+        data: data
       },
       {
         headers: {
@@ -187,7 +180,7 @@ export default function FlightCard(props) {
         variant='contained'
         color='secondary'
         onClick={() => {
-          props.handleDeleteFlightCard(props.cityFrom)
+          props.handleDeleteFlightCard(props.id)
         }}
       >
         yes
@@ -245,7 +238,7 @@ export default function FlightCard(props) {
                             disabled={!props.new && !edit}
                             className={classes.arrTime}
                             id='standard-password-input'
-                            label='Arrival Time'
+                            label='Arrival Time ex: 15:00'
                             value={arrTime}
                             onChange={handleChangeArrTime}
                           />
@@ -254,7 +247,7 @@ export default function FlightCard(props) {
                             disabled={!props.new && !edit}
                             className={classes.depTime}
                             id='standard-password-input'
-                            label='Departure Time'
+                            label='Departure Time ex: 15:00'
                             value={depTime}
                             onChange={handleChangeDepTime}
                           />
@@ -295,6 +288,7 @@ export default function FlightCard(props) {
                             label='Flight Date'
                             value={fDate}
                             onChange={handleChangeFDate}
+                            type="date"
                           />
 
                           <br />
@@ -324,16 +318,6 @@ export default function FlightCard(props) {
                                 setEcoSeats('')
 
                               } else {
-                                handleEditFlightCard({
-                                  cityFrom:cityFrom,
-                                  to: to,
-                                  fNum: fNum,
-                                  fDate: fDate,
-                                  arrTime:arrTime,
-                                  depTime:depTime,
-                                  busSeats:busSeats,
-                                  ecoSeats:ecoSeats
-                                })
                                 setCityFrom(cityFrom)
                                 setTo(to)
                                 setFDate(fDate)
@@ -343,6 +327,18 @@ export default function FlightCard(props) {
                                 setBusSeats(busSeats)
                                 setEcoSeats(ecoSeats)
                                 setId(id)
+                                handleEditFlightCard({
+                                  cityFrom:cityFrom,
+                                  to: to,
+                                  fNum: fNum,
+                                  fDate: fDate,
+                                  arrTime:arrTime,
+                                  depTime:depTime,
+                                  busSeats:busSeats,
+                                  ecoSeats:ecoSeats,
+                                  id: props.id
+                                })
+
                                 setEdit(false)
                               }
                             }}
