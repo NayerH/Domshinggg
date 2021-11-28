@@ -75,7 +75,9 @@ export default function AddFlight() {
   const handleChangeFNum = (event) => {
     setFNum(event.target.value)
   }
-
+  const handleChangeFDate = (event) => {
+    setFDate(event.target.value)
+  }
   const handleClick = () => {
     setOpen(true)
   }
@@ -115,6 +117,7 @@ export default function AddFlight() {
   }, [change])
 
   const handleSearch = async (cityFrom, to, fNum, fDate,arrTime,depTime,busSeats,ecoSeats) => {
+    console.log(fDate);
     const res = await axios.post(
       'http://localhost:3000/searchFlight',
       {
@@ -132,7 +135,13 @@ export default function AddFlight() {
           token: headers,
         },
       }
-    )
+    ).then((res) => {
+      console.log(res.data);
+      setFlightsArray(res.data)
+    })
+    .catch((error) => {
+      console.log(error)
+    })
     //IDK
   }
 
@@ -230,21 +239,14 @@ export default function AddFlight() {
           />
           <br />
           <br />
-          <LocalizationProvider dateAdapter={AdapterDateFns}>
-            <DatePicker
-              label='Departure date'
-              value={value}
-              onChange={(newValue) => {
-                setValue(newValue)
-              }}
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  helperText={params?.inputProps?.placeholder}
-                />
-              )}
-            />
-          </LocalizationProvider>
+          <TextField
+            required
+            className={classes.box}
+            id='outlined-basic'
+            label='Flight Date'
+            onChange={handleChangeFDate}
+            type="date"
+          />
           <br />
           <br />
           <TextField
@@ -295,7 +297,7 @@ export default function AddFlight() {
           <Button
             variant='contained'
             onClick={() => {
-              handleSearch()
+              handleSearch(cityFrom, to, fNum, fDate,arrTime,depTime,busSeats,ecoSeats)
             }}
           >
             Search

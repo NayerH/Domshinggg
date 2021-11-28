@@ -92,6 +92,7 @@ app.post('/viewAllFlights', flightController.viewFlight);
 app.post('/createFlight', flightController.addFlight);
 app.post('/deleteFlight', flightController.deleteFlight);
 app.post('/editFlight', flightController.updateFlight);
+app.post('/searchFlight', flightController.getFlights);
 // app.get('/signup', userController.signup);
 
 app.post("/login", userController.login);

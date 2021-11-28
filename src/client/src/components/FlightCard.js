@@ -326,7 +326,7 @@ export default function FlightCard(props) {
                                 setDepTime(depTime)
                                 setBusSeats(busSeats)
                                 setEcoSeats(ecoSeats)
-                                setId(id)
+                                setId(props.id)
                                 handleEditFlightCard({
                                   cityFrom:cityFrom,
                                   to: to,

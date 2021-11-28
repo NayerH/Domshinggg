@@ -38,7 +38,7 @@ exports.addFlight = (req, res) => {
           ArrivalTime: new Date(req.body.cityFrom.fDate + "T"+ req.body.cityFrom.arrTime+":00.123Z"),
           DepartureTime: new Date(req.body.cityFrom.fDate + "T"+ req.body.cityFrom.depTime+":00.123Z"),
           BusinessNumOfSeats: req.body.cityFrom.busSeats,
-          EconomyNumOfSeats: req.body.cityFrom.ecoSeats,
+          EconomyNumOfSeats: req.body.cityFrom.ecoSeats
     });
     console.log(flight);
     flight.save()
@@ -62,15 +62,63 @@ exports.viewFlight = (req, res) => {
       });
     };
 
-    exports.getFlight = (req, res) => {
-      Flight.find({Name:req.params.name})
-        .then(result => {
-          res.send(result);
-        })
-        .catch(err => {
-          console.log(err);
-        });
-    };
+exports.getFlights = (req, res) => {
+  const flight = {};
+  if(req.body.cityFrom !== ''){
+    flight.From = req.body.cityFrom;
+  }
+  if(req.body.to !== ''){
+    flight.To = req.body.to;
+  }
+  if(req.body.fNum !== ''){
+    flight.FlightNumber = parseInt(req.body.fNum,10);
+  }
+  if(req.body.fDate !== ''){
+    flight.FlightDate = new Date(req.body.fDate);
+  }
+  // if(req.body.arrTime !== ''){
+  //
+  // }
+  // if(req.body.depTime !== ''){
+  //
+  // }
+  if(req.body.busSeats !== ''){
+    flight.BusinessNumOfSeats = parseInt(req.body.busSeats,10);
+  }
+  if(req.body.ecoSeats !== ''){
+    flight.EconomyNumOfSeats = parseInt(req.body.ecoSeats,10);
+  }
+  // console.log(flight);
+  Flight.find(flight)
+    .then(result => {
+      if(req.body.arrTime !== '' || req.body.depTime !== ''){
+        for(let i = 0; i < result.length; i++){
+          let flightRes = result[i];
+          // console.log(flightRes);
+          if(req.body.arrTime !== ''){
+            if(flightRes.ArrivalTime.toISOString().substr(11,5) !== req.body.arrTime){
+              result.splice(i, 1);
+              i--;
+              continue;
+            }
+          }
+          if(req.body.depTime !== ''){
+            if(flightRes.DepartureTime.toISOString().substr(11,5) !== req.body.depTime){
+              console.log(flightRes);
+              result.splice(i, 1);
+              i--;
+            }
+          }
+        }
+      }
+      console.log(result);
+      // console.log(result);
+      res.send(result);
+    })
+    .catch(err => {
+      console.log(err);
+    });
+};
 
     exports.updateFlight = (req,res)=>{
       console.log(req.body.data);
