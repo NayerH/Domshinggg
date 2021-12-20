@@ -91,7 +91,6 @@ export default function AddFlight() {
   }
 
   useEffect(() => {
-
     if (window.localStorage.getItem('token') === 'undefined') {
       console.log('its null')
       history.push('/')
@@ -108,7 +107,6 @@ export default function AddFlight() {
         )
         .then((res) => {
           setFlightsArray(res.data)
-          // console.log(res.data);
         })
         .catch((error) => {
           console.log(error)

@@ -162,21 +162,24 @@ export default function NavBar(props) {
   // }, [type])
 
   const signout = async () => {
-
-    await axios.post("http://localhost:3000/logout",{},
-    {
-      headers: {
-        token: headers,
-      },
-    }).then( (res) => {
-      if(res.data.status === 0){
-        window.localStorage.setItem('token', 'undefined')
-        history.push('/')
-      } else {
-        //DISPLAY ERROR
-      }
-    })
-
+    await axios
+      .post(
+        'http://localhost:3000/logout',
+        {},
+        {
+          headers: {
+            token: headers,
+          },
+        }
+      )
+      .then((res) => {
+        if (res.data.status === 0) {
+          window.localStorage.setItem('token', 'undefined')
+          history.push('/')
+        } else {
+          //DISPLAY ERROR
+        }
+      })
   }
   const classes = useStyles()
   const handleHome = (e) => {

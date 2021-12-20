@@ -15,7 +15,6 @@ import { Snackbar } from '@material-ui/core'
 import Modal from '@material-ui/core/Modal'
 import { useHistory } from 'react-router'
 import Button from '@material-ui/core/Button'
-import { isMobile } from 'react-device-detect'
 
 let count = [
   {
