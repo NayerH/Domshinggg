@@ -460,7 +460,7 @@ export default function FlightCard2(props) {
                             }}
                           >
                             <MenuItem onClick={handleCloseDet}>
-                              Trip Duration:
+                              Trip Duration: 
                             </MenuItem>
                             <MenuItem onClick={handleCloseDet}>
                               Baggage Allowance:

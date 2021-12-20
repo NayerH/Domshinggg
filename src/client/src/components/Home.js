@@ -103,16 +103,13 @@ export default function Home() {
   const [depFlag, setDepFlag] = React.useState(false)
   const [retFlag, setRetFlag] = React.useState(false)
   const [finalFlag, setFinalFlag] = React.useState(false)
-  const [numOfPass, setNumOfPass] = React.useState(0)
+  const [adults, setAdults] = React.useState(0)
+  const [children, setChildren] = React.useState(0)
   const [depAir, setDepAir] = React.useState('')
   const [arrAir, setArrAir] = React.useState('')
   const [depDate, setDepDate] = React.useState('')
   const [arrDate, setArrDate] = React.useState('')
   const [cabin, setCabin] = React.useState('')
-
-  const handleChangeCabin = (event) => {
-    setCabin(event.target.value)
-  }
 
   const handleSelected = (fNum) => {
     for (var i = 0; i < departure.length; i++) {
@@ -137,9 +134,11 @@ export default function Home() {
     setDepFlag(false)
     setRetFlag(false)
   }
-
-  const handleChangeNumOfPass = (event) => {
-    setNumOfPass(event.target.value)
+  const handleChangeChildren = (event) => {
+    setChildren(event.target.value)
+  }
+  const handleChangeAdults = (event) => {
+    setAdults(event.target.value)
   }
   const handleChangeDepAir = (event) => {
     setDepAir(event.target.value)
@@ -153,7 +152,9 @@ export default function Home() {
   const handleChangeArrDate = (event) => {
     setArrDate(event.target.value)
   }
-
+  const handleChangeCabin = (event) => {
+    setCabin(event.target.value)
+  }
   const handleClick = () => {
     setOpen(true)
   }
@@ -168,7 +169,8 @@ export default function Home() {
   }
 
   const handleSearch = async (
-    numOfPass,
+    adults,
+    children,
     depAir,
     arrAir,
     cabin,
@@ -177,14 +179,15 @@ export default function Home() {
   ) => {
     const res = await axios
       .post(
-        'http://localhost:3000/searchFlight',
+        'http://localhost:3000/searchFlightUser',
         {
-          numOfPass: numOfPass,
           depAir: depAir,
           arrAir: arrAir,
-          cabin: cabin,
           depDate: depDate,
           arrDate: arrDate,
+          children: children,
+          adults: adults,
+          cabin: cabin,
         },
         {
           headers: {
@@ -194,8 +197,8 @@ export default function Home() {
       )
       .then((res) => {
         console.log(res.data)
-        setFlightsArrayDep(res.data.departureFlights)
-        setFlightsArrayRet(res.data.returnFlights)
+        // setFlightsArrayDep(res.data.departureFlights)
+        // setFlightsArrayRet(res.data.returnFlights)
       })
       .catch((error) => {
         console.log(error)
@@ -216,9 +219,18 @@ export default function Home() {
           <TextField
             className={classes.box}
             id='outlined-basic'
-            label='Number Of Passengers'
+            label='Number Of Adults'
             variant='outlined'
-            onChange={handleChangeNumOfPass}
+            onChange={handleChangeAdults}
+          />{' '}
+          <br />
+          <br />
+          <TextField
+            className={classes.box}
+            id='outlined-basic'
+            label='Number Of Children'
+            variant='outlined'
+            onChange={handleChangeChildren}
           />{' '}
           <br />
           <br />
@@ -264,7 +276,7 @@ export default function Home() {
             onChange={handleChangeDepDate}
             type='date'
           />
-          <h4>Arrival Date</h4>
+          <h4>Return Date</h4>
           <TextField
             required
             className={classes.box}
@@ -278,7 +290,15 @@ export default function Home() {
           <Button
             variant='contained'
             onClick={() => {
-              handleSearch(numOfPass, depAir, arrAir, cabin, depDate, arrDate)
+              handleSearch(
+                adults,
+                children,
+                depAir,
+                arrAir,
+                cabin,
+                depDate,
+                arrDate
+              )
             }}
           >
             Search
