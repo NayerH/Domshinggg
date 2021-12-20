@@ -36,6 +36,26 @@ const flightSchema = new Schema({
     type: Number,
     required: true
   },
+  Baggage: {
+    type: Number,
+    required: true
+  },
+  TripDuration: {
+    type: String,
+    required: true
+  },
+  Price: {
+    type: Number,
+    required: true
+  },
+  SeatsArrBusiness: {
+    type: [Boolean],
+    required: true
+  },
+  SeatsArrEconomy: {
+    type: [Boolean],
+    required: true
+  }
 }, { timestamps: true });
 flightSchema.set('toJSON', { virtuals: true });
 flightSchema.set('toObject', { virtuals: true });

@@ -135,7 +135,7 @@ export default function Login() {
           return
         }
 
-        window.localStorage.setItem('token', res.headers.authtoken)
+        window.localStorage.setItem('token', res.headers.token)
         window.localStorage.setItem('name', res.headers.name)
 
         history.push('/flight')

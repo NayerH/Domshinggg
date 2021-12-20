@@ -20,7 +20,10 @@ const userSchema = new Schema({
   },
   password: {
     type: String
-  }
+  },
+  reservations: {
+    type: [Object]
+  },
 }, { timestamps: true });
 userSchema.set('toJSON', { virtuals: true });
 userSchema.set('toObject', { virtuals: true });

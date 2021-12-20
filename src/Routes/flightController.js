@@ -30,15 +30,23 @@ exports.addFlight = (req, res) => {
   // );
   // res.send(200);
   console.log(req.body);
+    let arrTime = new Date(req.body.cityFrom.fDate + "T"+ req.body.cityFrom.arrTime+":00.123Z");
+    let depTime =  new Date(req.body.cityFrom.fDate + "T"+ req.body.cityFrom.depTime+":00.123Z");
+    let tripD = (parseInt(Math.abs(arrTime - depTime) / (1000 * 60 * 60) % 24,10) + " Hours " + parseInt(Math.abs(arrTime.getTime() - depTime.getTime()) / (1000 * 60) % 60,10) + " Minutes");
     const flight = new Flight({
           FlightNumber: req.body.cityFrom.fNum,
           From: req.body.cityFrom.cityFrom,
           To: req.body.cityFrom.to,
           FlightDate: new Date(req.body.cityFrom.fDate),
-          ArrivalTime: new Date(req.body.cityFrom.fDate + "T"+ req.body.cityFrom.arrTime+":00.123Z"),
-          DepartureTime: new Date(req.body.cityFrom.fDate + "T"+ req.body.cityFrom.depTime+":00.123Z"),
+          ArrivalTime: arrTime,
+          DepartureTime: depTime,
           BusinessNumOfSeats: req.body.cityFrom.busSeats,
-          EconomyNumOfSeats: req.body.cityFrom.ecoSeats
+          EconomyNumOfSeats: req.body.cityFrom.ecoSeats,
+          Baggage: 2,
+          Price: 3000,
+          TripDuration: tripD,
+          SeatsArrBusiness: new Array(parseInt(req.body.cityFrom.busSeats,10)).fill(false),
+          SeatsArrEconomy: new Array(parseInt(req.body.cityFrom.ecoSeats,10)).fill(false)
     });
     console.log(flight);
     flight.save()
@@ -54,6 +62,16 @@ exports.addFlight = (req, res) => {
 
 exports.viewFlight = (req, res) => {
     Flight.find({})
+      .then(result => {
+        res.send(result);
+      })
+      .catch(err => {
+        console.log(err);
+      });
+    };
+
+exports.findSpecificFlight = (req, res) => {
+    Flight.findOne({FlightNumber: req.body.flightNum})
       .then(result => {
         res.send(result);
       })
@@ -120,6 +138,41 @@ exports.getFlights = (req, res) => {
     });
 };
 
+exports.getFlightsUser = (req, res) => {
+  const flightDep = {};
+  const flightRet = {};
+  if(req.body.depAir !== ''){
+    flightDep.From = req.body.depAir;
+    flightRet.To = req.body.depAir;
+  }
+  if(req.body.arrAir !== ''){
+    flightDep.To = req.body.arrAir;
+    flightRet.From = req.body.arrAir;
+  }
+  if(req.body.depDate !== ''){
+    flightDep.FlightDate = new Date(req.body.depDate);
+  }
+  if(req.body.arrDate !== ''){
+    flightRet.FlightDate = new Date(req.body.arrDate);
+  }
+  let numOfPassengers = parseInt(req.body.children,10) + parseInt(req.body.adults,10);
+  let depFlights = Flight.find(flightDep).catch(err => {console.log(err);});
+  let arrFlights = Flight.find(flightArr).catch(err => {console.log(err);});
+  if(req.body.cabin === "Business") {
+    depFlights = depFlights.filter(flight => flight.BusinessNumOfSeats >= numOfPassengers);
+    arrFlights = arrFlights.filter(flight => flight.BusinessNumOfSeats >= numOfPassengers);
+  } else {
+    depFlights = depFlights.filter(flight => flight.EconomyNumOfSeats >= numOfPassengers);
+    arrFlights = arrFlights.filter(flight => flight.EconomyNumOfSeats >= numOfPassengers);
+  }
+  let result = {};
+  result.depFlights = depFlights;
+  result.arrFlights = arrFlights;
+  result.cabin = req.body.cabin;
+  result.numOfPassengers = numOfPassengers;
+  res.send(result);
+};
+
     exports.updateFlight = (req,res)=>{
       console.log(req.body.data);
       const flight = {
@@ -140,6 +193,27 @@ exports.getFlights = (req, res) => {
           console.log(err);
         });
 
+    };
+
+    exports.testUpdate = (req,res)=>{
+      let rawdata = fs.readFileSync('./flights.json');
+      let flights = JSON.parse(rawdata);
+      flights.forEach( (flightRaw) => {
+        // let arrTime = new Date(flightRaw.ArrivalTime.$date);
+        // let depTime = new Date(flightRaw.DepartureTime.$date);
+        let tripD = (parseInt(Math.abs(arrTime - depTime) / (1000 * 60 * 60) % 24,10) + " Hours " + parseInt(Math.abs(arrTime.getTime() - depTime.getTime()) / (1000 * 60) % 60,10) + " Minutes");
+        let flight = {
+          SeatsArrBusiness: new Array(27).fill(false),
+          SeatsArrEconomy: new Array(27).fill(false)
+        };
+        Flight.findByIdAndUpdate(flightRaw._id.$oid, flight).then(result =>{
+            // res.status(200).send("Flight updated ");
+            console.log('The Flight is Updated successfully!');
+        }).catch(err => {
+            console.log(err);
+          });
+        }
+      );
     };
 
     //Deleting an existing Flight

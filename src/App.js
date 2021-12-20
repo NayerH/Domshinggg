@@ -5,7 +5,7 @@ const express = require("express");
 const mongoose = require('mongoose');
 const session = require('express-session');
 var cors = require('cors');
-const JWT = require('jsonwebtoken');
+const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 // const passport = require('passport');
 // const passportLocalMongoose = require('passport-local-mongoose');
@@ -23,7 +23,7 @@ const Flight = require('./models/Flight');
 console.log(MongoURI);
 // #Importing the userController
 
-app.use(cors({ exposedHeaders: ['authToken', 'name'] }));
+app.use(cors({ exposedHeaders: ['token', 'name'] }));
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(express.json());
  // To parse the incoming requests with JSON payloads// configurations
@@ -87,12 +87,15 @@ app.get('/get-all-users/:name', userController.getUser);
 app.put('/update-user/:id',userController.updateUser);
 app.delete('/delete-user/:id',userController.deleteUser);
 
-app.get('/add-all-flights', flightController.addFlight);
-app.post('/viewAllFlights', flightController.viewFlight);
-app.post('/createFlight', flightController.addFlight);
-app.post('/deleteFlight', flightController.deleteFlight);
-app.post('/editFlight', flightController.updateFlight);
-app.post('/searchFlight', flightController.getFlights);
+//app.get('/add-all-flights',authenticateToken, flightController.addFlight);
+app.post('/viewAllFlights',authenticateToken, flightController.viewFlight);
+app.post('/createFlight',authenticateToken, flightController.addFlight);
+app.post('/deleteFlight',authenticateToken, flightController.deleteFlight);
+app.post('/editFlight',authenticateToken, flightController.updateFlight);
+app.post('/searchFlight',authenticateToken, flightController.getFlights);
+app.post('/searchFlightUser',authenticateToken, flightController.getFlightsUser);
+app.post('/findFlight',authenticateToken, flightController.findSpecificFlight);
+app.get('/testUpdate', flightController.testUpdate);
 // app.get('/signup', userController.signup);
 
 app.post("/login", userController.login);
@@ -102,3 +105,17 @@ app.post("/logout", userController.logout);
 app.listen(port, () => {
     console.log(`Listening to requests on http://localhost:${port}`);
   });
+
+  function authenticateToken(req, res, next) {
+    const token = req.headers.token;
+    if (token == null) return res.sendStatus(401);
+
+    jwt.verify(token, process.env.TOKEN_SECRET, (err, user) => {
+      if (err){
+        console.log(err);
+        return res.sendStatus(403);
+      }
+      req.user = user;
+      next();
+    });
+  }

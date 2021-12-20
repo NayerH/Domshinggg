@@ -90,18 +90,14 @@ exports.login = async (req, res) => {
         if (result) {
           const isAdmin = user.isAdmin;
           const token = jwt.sign(
-            {
-              email: user.email,
-              id: user._id,
-              // name: user.firstName,
-            },
+            {user},
             process.env.TOKEN_SECRET,
             {
               expiresIn: '5h',
             }
           );
 
-          res.setHeader('authToken', token);
+          res.setHeader('token', token);
           res.setHeader('isAdmin', isAdmin);
           return res.json({
             user,
@@ -132,7 +128,7 @@ exports.login = async (req, res) => {
 exports.logout = async (req, res) => {
   try {
     const token = req.headers.token;
-    // console.log(token);
+    //console.log(token);
     jwt.verify(token, process.env.TOKEN_SECRET);
     return res.json({
       status: 0,
