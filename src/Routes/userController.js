@@ -48,28 +48,38 @@ exports.viewUsers = (req, res) => {
         });
     };
 
-    exports.updateUser = (req,res)=>{
-      User.findByIdAndUpdate(req.params.id,req.body).then(result =>{
+exports.updateUser = (req,res)=>{
+  updateUser = {};
+  if(req.body.Name != ""){
+    updateUser.Name = req.body.Name;
+  }
+  if(req.body.passportNo != ""){
+    updateUser.passportNo = req.body.passportNo;
+  }
+  if(req.body.username != ""){
+    updateUser.username = req.body.username;
+  }
+  User.findByIdAndUpdate(req.body.id,updateUser).then(result =>{
 
-          res.status(200).send("User updated ");
-          console.log('The User is Updated successfully !');
-      }).catch(err => {
-          console.log(err);
-        });
+      res.status(200).send("User updated ");
+      console.log('The User is Updated successfully !');
+  }).catch(err => {
+      console.log(err);
+    });
 
-    };
+};
 
-    //Deleting an existing user
-    exports.deleteUser = (req,res)=>{
-      User.findByIdAndRemove(req.params.id).then(result =>{
+//Deleting an existing user
+exports.deleteUser = (req,res)=>{
+  User.findByIdAndRemove(req.params.id).then(result =>{
 
-          res.status(200).send("User Deleted ");
-          console.log("The User is deleted successfully !");
-      }).catch(err => {
-          console.log(err);
-        });
+      res.status(200).send("User Deleted ");
+      console.log("The User is deleted successfully !");
+  }).catch(err => {
+      console.log(err);
+    });
 
-    };
+};
 
 //LOGIN
 exports.login = async (req, res) => {

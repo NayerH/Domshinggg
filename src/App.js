@@ -81,11 +81,11 @@ app.use(function (req, res, next) {
 
 // #Routing to usercontroller here
 
-app.post('/add-user', userController.addUser);
-app.get('/view-users',userController.viewUsers);
+app.post('/add-user', authenticateToken, userController.addUser);
+app.get('/view-users', authenticateToken, userController.viewUsers);
 app.get('/get-all-users/:name', userController.getUser);
-app.put('/update-user/:id',userController.updateUser);
-app.delete('/delete-user/:id',userController.deleteUser);
+app.put('/updateUser', authenticateToken, userController.updateUser);
+// app.delete('/delete-user/:id',userController.deleteUser);
 
 //app.get('/add-all-flights',authenticateToken, flightController.addFlight);
 app.post('/viewAllFlights',authenticateToken, flightController.viewFlight);
@@ -95,7 +95,7 @@ app.post('/editFlight',authenticateToken, flightController.updateFlight);
 app.post('/searchFlight',authenticateToken, flightController.getFlights);
 app.post('/searchFlightUser',authenticateToken, flightController.getFlightsUser);
 app.post('/findFlight',authenticateToken, flightController.findSpecificFlight);
-app.get('/testUpdate', flightController.testUpdate);
+// app.get('/testUpdate', flightController.testUpdate);
 // app.get('/signup', userController.signup);
 
 app.post("/login", userController.login);
@@ -106,16 +106,16 @@ app.listen(port, () => {
     console.log(`Listening to requests on http://localhost:${port}`);
   });
 
-  function authenticateToken(req, res, next) {
-    const token = req.headers.token;
-    if (token == null) return res.sendStatus(401);
+function authenticateToken(req, res, next) {
+  const token = req.headers.token;
+  if (token == null) return res.sendStatus(401);
 
-    jwt.verify(token, process.env.TOKEN_SECRET, (err, user) => {
-      if (err){
-        console.log(err);
-        return res.sendStatus(403);
-      }
-      req.user = user;
-      next();
-    });
-  }
+  jwt.verify(token, process.env.TOKEN_SECRET, (err, user) => {
+    if (err){
+      console.log(err);
+      return res.sendStatus(403);
+    }
+    req.user = user;
+    next();
+  });
+}

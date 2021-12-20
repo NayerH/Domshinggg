@@ -173,58 +173,58 @@ exports.getFlightsUser = (req, res) => {
   res.send(result);
 };
 
-    exports.updateFlight = (req,res)=>{
-      console.log(req.body.data);
-      const flight = {
-            FlightNumber: req.body.data.fNum,
-            From: req.body.data.cityFrom,
-            To: req.body.data.to,
-            FlightDate: new Date(req.body.data.fDate),
-            ArrivalTime: new Date(req.body.data.fDate + "T"+ req.body.data.arrTime+".123Z"),
-            DepartureTime: new Date(req.body.data.fDate + "T"+ req.body.data.depTime+".123Z"),
-            BusinessNumOfSeats: req.body.data.busSeats,
-            EconomyNumOfSeats: req.body.data.ecoSeats,
-      };
-      Flight.findByIdAndUpdate(req.body.data.id,flight).then(result =>{
+exports.updateFlight = (req,res)=>{
+  console.log(req.body.data);
+  const flight = {
+        FlightNumber: req.body.data.fNum,
+        From: req.body.data.cityFrom,
+        To: req.body.data.to,
+        FlightDate: new Date(req.body.data.fDate),
+        ArrivalTime: new Date(req.body.data.fDate + "T"+ req.body.data.arrTime+".123Z"),
+        DepartureTime: new Date(req.body.data.fDate + "T"+ req.body.data.depTime+".123Z"),
+        BusinessNumOfSeats: req.body.data.busSeats,
+        EconomyNumOfSeats: req.body.data.ecoSeats,
+  };
+  Flight.findByIdAndUpdate(req.body.data.id,flight).then(result =>{
 
-          res.status(200).send("Flight updated ");
-          console.log('The Flight is Updated successfully!');
-      }).catch(err => {
-          console.log(err);
-        });
+      res.status(200).send("Flight updated ");
+      console.log('The Flight is Updated successfully!');
+  }).catch(err => {
+      console.log(err);
+    });
 
+};
+
+exports.testUpdate = (req,res)=>{
+  let rawdata = fs.readFileSync('./flights.json');
+  let flights = JSON.parse(rawdata);
+  flights.forEach( (flightRaw) => {
+    // let arrTime = new Date(flightRaw.ArrivalTime.$date);
+    // let depTime = new Date(flightRaw.DepartureTime.$date);
+    let tripD = (parseInt(Math.abs(arrTime - depTime) / (1000 * 60 * 60) % 24,10) + " Hours " + parseInt(Math.abs(arrTime.getTime() - depTime.getTime()) / (1000 * 60) % 60,10) + " Minutes");
+    let flight = {
+      SeatsArrBusiness: new Array(27).fill(false),
+      SeatsArrEconomy: new Array(27).fill(false)
     };
+    Flight.findByIdAndUpdate(flightRaw._id.$oid, flight).then(result =>{
+        // res.status(200).send("Flight updated ");
+        console.log('The Flight is Updated successfully!');
+    }).catch(err => {
+        console.log(err);
+      });
+    }
+  );
+};
 
-    exports.testUpdate = (req,res)=>{
-      let rawdata = fs.readFileSync('./flights.json');
-      let flights = JSON.parse(rawdata);
-      flights.forEach( (flightRaw) => {
-        // let arrTime = new Date(flightRaw.ArrivalTime.$date);
-        // let depTime = new Date(flightRaw.DepartureTime.$date);
-        let tripD = (parseInt(Math.abs(arrTime - depTime) / (1000 * 60 * 60) % 24,10) + " Hours " + parseInt(Math.abs(arrTime.getTime() - depTime.getTime()) / (1000 * 60) % 60,10) + " Minutes");
-        let flight = {
-          SeatsArrBusiness: new Array(27).fill(false),
-          SeatsArrEconomy: new Array(27).fill(false)
-        };
-        Flight.findByIdAndUpdate(flightRaw._id.$oid, flight).then(result =>{
-            // res.status(200).send("Flight updated ");
-            console.log('The Flight is Updated successfully!');
-        }).catch(err => {
-            console.log(err);
-          });
-        }
-      );
-    };
+//Deleting an existing Flight
+exports.deleteFlight = (req,res)=>{
+  console.log(req.body);
+  Flight.findByIdAndRemove(req.body.id).then(result =>{
 
-    //Deleting an existing Flight
-    exports.deleteFlight = (req,res)=>{
-      console.log(req.body);
-      Flight.findByIdAndRemove(req.body.id).then(result =>{
+      res.status(200).send("Flight Deleted ");
+      console.log("The Flight is deleted successfully !");
+  }).catch(err => {
+      console.log(err);
+    });
 
-          res.status(200).send("Flight Deleted ");
-          console.log("The Flight is deleted successfully !");
-      }).catch(err => {
-          console.log(err);
-        });
-
-    };
+};
