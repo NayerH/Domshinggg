@@ -127,16 +127,16 @@ exports.getFlights = (req, res) => {
     .then((result) => {
       if (req.body.arrTime !== '' || req.body.depTime !== '') {
         for (let i = 0; i < result.length; i++) {
-          let flightRes = result[i]
+          let flightRes = result[i];
           // console.log(flightRes);
           if (req.body.arrTime !== '') {
             if (
               flightRes.ArrivalTime.toISOString().substr(11, 5) !==
               req.body.arrTime
             ) {
-              result.splice(i, 1)
-              i--
-              continue
+              result.splice(i, 1);
+              i--;
+              continue;
             }
           }
           if (req.body.depTime !== '') {
@@ -151,78 +151,76 @@ exports.getFlights = (req, res) => {
           }
         }
       }
-      console.log(result)
+      console.log(result);
       // console.log(result);
-      res.send(result)
+      res.send(result);
     })
     .catch((err) => {
-      console.log(err)
-    })
-}
+      console.log(err);
+    });
+};
 
 exports.getFlightsUser = (req, res) => {
-  console.log(req.body)
-  const flightDep = {}
-  const flightRet = {}
+  // console.log(req.body)
+  const flightDep = {};
+  const flightRet = {};
   if (req.body.depAir !== '') {
-    flightDep.From = req.body.depAir
-    flightRet.To = req.body.depAir
+    flightDep.From = req.body.depAir;
+    flightRet.To = req.body.depAir;
   }
   if (req.body.arrAir !== '') {
-    flightDep.To = req.body.arrAir
-    flightRet.From = req.body.arrAir
+    flightDep.To = req.body.arrAir;
+    flightRet.From = req.body.arrAir;
   }
   if (req.body.depDate !== '') {
-    flightDep.FlightDate = new Date(req.body.depDate)
+    flightDep.FlightDate = new Date(req.body.depDate);
   }
   if (req.body.arrDate !== '') {
-    flightRet.FlightDate = new Date(req.body.arrDate)
+    flightRet.FlightDate = new Date(req.body.arrDate);
   }
   let numOfPassengers =
-    parseInt(req.body.children, 10) + parseInt(req.body.adults, 10)
-  let depFlights = await Flight.find(flightDep).catch((err) => {
-    console.log(err)
-  })
-  let arrFlights = await Flight.find(flightRet).catch((err) => {
-    console.log(err)
-  })
-  console.log(depFlights)
+    parseInt(req.body.children, 10) + parseInt(req.body.adults, 10);
+  Flight.find(flightDep).then((depFlights) => {
+    Flight.find(flightRet).then((arrFlights) => {
+      if (!(depFlights instanceof Array)) {
+        // console.log('NOT ARRAY')
+        let tempDepFlights = []
+        tempDepFlights.push(depFlights)
+        depFlights = tempDepFlights
+        console.log(depFlights)
+      }
+      if (!(arrFlights instanceof Array)) {
+        // console.log('NOT ARRAY')
+        let tempArrFlights = []
+        tempArrFlights.push(arrFlights)
+        arrFlights = tempArrFlights
+      }
+      if (req.body.cabin === 'Business') {
+        depFlights = depFlights.filter(
+          (flight) => flight.BusinessNumOfSeats >= numOfPassengers
+        )
+        arrFlights = arrFlights.filter(
+          (flight) => flight.BusinessNumOfSeats >= numOfPassengers
+        )
+      } else {
+        depFlights = depFlights.filter(
+          (flight) => flight.EconomyNumOfSeats >= numOfPassengers
+        )
+        arrFlights = arrFlights.filter(
+          (flight) => flight.EconomyNumOfSeats >= numOfPassengers
+        )
+      }
+      let result = {}
+      result.depFlights = depFlights
+      result.arrFlights = arrFlights
+      result.cabin = req.body.cabin
+      result.numOfPassengers = numOfPassengers
+      res.send(result)
+    });
+  });
 
-  if (!(depFlights instanceof Array)) {
-    // console.log('NOT ARRAY')
-    let tempDepFlights = []
-    tempDepFlights.push(depFlights)
-    depFlights = tempDepFlights
-    console.log(depFlights)
-  }
-  if (!(arrFlights instanceof Array)) {
-    // console.log('NOT ARRAY')
-    let tempArrFlights = []
-    tempArrFlights.push(arrFlights)
-    arrFlights = tempArrFlights
-  }
-  if (req.body.cabin === 'Business') {
-    depFlights = depFlights.filter(
-      (flight) => flight.BusinessNumOfSeats >= numOfPassengers
-    )
-    arrFlights = arrFlights.filter(
-      (flight) => flight.BusinessNumOfSeats >= numOfPassengers
-    )
-  } else {
-    depFlights = depFlights.filter(
-      (flight) => flight.EconomyNumOfSeats >= numOfPassengers
-    )
-    arrFlights = arrFlights.filter(
-      (flight) => flight.EconomyNumOfSeats >= numOfPassengers
-    )
-  }
-  let result = {}
-  result.depFlights = depFlights
-  result.arrFlights = arrFlights
-  result.cabin = req.body.cabin
-  result.numOfPassengers = numOfPassengers
-  res.send(result)
-}
+
+};
 
 exports.updateFlight = (req, res) => {
   console.log(req.body.data)

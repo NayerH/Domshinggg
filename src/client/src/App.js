@@ -11,9 +11,9 @@ class App extends Component {
     return (
       <Router>
         <div>
-          <Route exact path='/' component={Login} />
-          <Route exact path='/flight' component={AddFlight} />
-          <Route exact path='/home' component={Home} />
+          <Route exact path='/' component={Home} />
+          <Route exact path='/admin' component={AddFlight} />
+          <Route exact path='/login' component={Login} />
           <Route exact path='/chooseSeats' component={Seats} />
         </div>
       </Router>
