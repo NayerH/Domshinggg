@@ -5,23 +5,17 @@ import AppBar from '@material-ui/core/AppBar'
 import Toolbar from '@material-ui/core/Toolbar'
 import Button from '@material-ui/core/Button'
 import IconButton from '@material-ui/core/IconButton'
-import ShoppingCartIcon from '@mui/icons-material/ShoppingCart'
-import PersonIcon from '@mui/icons-material/Person'
 import { isMobile } from 'react-device-detect'
 import Box from '@mui/material/Box'
 import Menu from '@mui/material/Menu'
 import MenuItem from '@mui/material/MenuItem'
 import Drawer from '@mui/material/Drawer'
-import InputLabel from '@mui/material/InputLabel'
-import FormControl from '@mui/material/FormControl'
-import Select from '@mui/material/Select'
 
 const useStyles = makeStyles({
   root: {
     flexGrow: 1,
     width: isMobile ? '100vw' : '100%',
   },
-
   title: {
     flexGrow: '5',
     marginLeft: isMobile ? '-2vw' : '5vw',
@@ -39,7 +33,6 @@ const useStyles = makeStyles({
     height: isMobile ? '-0vw' : '3vw',
     width: isMobile ? '-0vw' : '3vw',
   },
-
   b: {
     width: isMobile ? '3vw' : '4vw',
     fontSize: isMobile ? '3vw' : '1vw',
@@ -53,7 +46,6 @@ const useStyles = makeStyles({
     width: isMobile ? '-0vw' : '5vw',
     height: '5vw',
   },
-
   type: {
     marginRight: isMobile ? '-8vw' : '76vw',
     fontSize: isMobile ? '0vw' : '1vw',
@@ -158,7 +150,6 @@ export default function NavBar(props) {
           window.localStorage.setItem('token', 'undefined')
           window.location = '/'
         } else {
-          //DISPLAY ERROR
         }
       })
   }

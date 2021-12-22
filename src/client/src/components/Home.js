@@ -1,12 +1,8 @@
 import React from 'react'
-import NavBar from './NavBar'
-import { useEffect } from 'react'
 import axios from 'axios'
 import { makeStyles } from '@material-ui/core/styles'
 import { Snackbar } from '@material-ui/core'
-import FlightCard from '../components/FlightCard'
 import Box from '@mui/material/Box'
-import AdapterDateFns from '@mui/lab/AdapterDateFns'
 import Button from '@mui/material/Button'
 import TextField from '@mui/material/TextField'
 import InputLabel from '@mui/material/InputLabel'
@@ -48,49 +44,8 @@ const useStyles = makeStyles({
     marginTop: '2vw',
   },
 })
-const cabin = ''
 var clicksDep = 0
 var clicksArr = 0
-const departure = [
-  {
-    fNum: 123,
-    DepartureTime: '15:00',
-    ArrivalTime: '20:00',
-    CabinClass: 'Economy',
-    Price: '1000',
-    TripDuration: '5h 0min',
-    BaggageAllowance: '2',
-  },
-  {
-    fNum: 456,
-    DepartureTime: '16:00',
-    ArrivalTime: '20:00',
-    CabinClass: 'Economy',
-    Price: '2000',
-    TripDuration: '4h 0min',
-    BaggageAllowance: '2',
-  },
-]
-const ret = [
-  {
-    fNum: 789,
-    DepartureTime: '1:00',
-    ArrivalTime: '2:00',
-    CabinClass: 'Economy',
-    Price: '3000',
-    TripDuration: '2h 0min',
-    BaggageAllowance: '1',
-  },
-  {
-    fNum: 321,
-    DepartureTime: '4:00',
-    ArrivalTime: '6:00',
-    CabinClass: 'Economy',
-    Price: '1000',
-    TripDuration: '2h 0min',
-    BaggageAllowance: '1',
-  },
-]
 
 export default function Home() {
   const classes = useStyles()
@@ -110,7 +65,10 @@ export default function Home() {
   const [cabin, setCabin] = React.useState('')
   const [depFlight, setDepFlight] = React.useState('')
   const [retFlight, setRetFlight] = React.useState('')
-  const [disable, setDisable] = React.useState(true)
+  const [priceDep, setPriceDep] = React.useState(0)
+  const [priceRet, setPriceRet] = React.useState(0)
+  const [from, setFrom] = React.useState('')
+  const [to, setTo] = React.useState('')
 
   const handleClick = () => {
     setOpen(true)
@@ -128,6 +86,9 @@ export default function Home() {
         if (depFlag === false) {
           setDepFlag(true)
           setDepFlight(fNum)
+          setPriceDep(flightsArrayDep[i].Price)
+          setFrom(flightsArrayDep[i].From)
+          setTo(flightsArrayDep[i].To)
           console.log('Done 1:' + fNum)
         } else {
           setDepFlag(false)
@@ -141,6 +102,7 @@ export default function Home() {
         if (retFlag === false) {
           setRetFlag(true)
           setRetFlight(fNum)
+          setPriceRet(flightsArrayRet[i].Price)
           console.log('Done 2 ' + fNum)
         } else {
           setRetFlag(false)
@@ -173,6 +135,22 @@ export default function Home() {
   }
   const handleClickBook = () => {
     if (depFlag === true && retFlag === true) {
+      // console.log(depFlight + ' ' + retFlight)
+      // console.log(window.localStorage.getItem('depFightNum'))
+      window.localStorage.setItem('depFlightNum', depFlight)
+      window.localStorage.setItem('retFlightNum', retFlight)
+      window.localStorage.setItem('cabin', cabin)
+      window.localStorage.setItem('depDate', depDate)
+      window.localStorage.setItem('retDate', arrDate)
+      window.localStorage.setItem('from', from)
+      window.localStorage.setItem('to', to)
+      window.localStorage.setItem('priceDep', priceDep)
+      window.localStorage.setItem('priceRet', priceRet)
+
+      const numOfPassengers = parseInt(adults, 10) + parseInt(children, 10)
+      window.localStorage.setItem('numOfPassengers', numOfPassengers)
+      //window.localStorage.setItem('price', price)
+
       window.location = '/chooseSeats'
     } else {
       handleClick()
@@ -188,30 +166,21 @@ export default function Home() {
     arrDate
   ) => {
     const res = await axios
-      .post(
-        'http://localhost:3000/searchFlightUser',
-        {
-          depAir: depAir,
-          arrAir: arrAir,
-          depDate: depDate,
-          arrDate: arrDate,
-          children: children,
-          adults: adults,
-          cabin: cabin,
-        },
-        {
-          headers: {
-            token: headers,
-          },
-        }
-      )
+      .post('http://localhost:3000/searchFlightUser', {
+        depAir: depAir,
+        arrAir: arrAir,
+        depDate: depDate,
+        arrDate: arrDate,
+        children: children,
+        adults: adults,
+        cabin: cabin,
+      })
       .then((res) => {
         setDepFlag(false)
         setRetFlag(false)
-        console.log(res.data.cabin)
         setFlightsArrayDep(res.data.depFlights)
         setFlightsArrayRet(res.data.arrFlights)
-        cabin = res.data.cabin
+        setCabin(res.data.cabin)
       })
       .catch((error) => {
         console.log(error)
@@ -316,7 +285,6 @@ export default function Home() {
         </div>
         <div className={classes.flights}>
           <h2>Departure Flights</h2>
-          {/* <FlightCard2 handleSelected={handleSelected} /> */}
           {flightsArrayDep.map((d) => (
             <FlightCard2
               handleSelected={handleSelected}
@@ -334,7 +302,6 @@ export default function Home() {
         </div>
         <div className={classes.flights}>
           <h2>Return Flights</h2>
-          {/* <FlightCard2 handleSelected={handleSelected} /> */}
           {flightsArrayRet.map((d) => (
             <FlightCard2
               handleSelected={handleSelected}

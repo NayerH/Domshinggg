@@ -1,36 +1,40 @@
 //jshint esversion:6
 // External variables
-require('dotenv').config();
-const express = require("express");
-const mongoose = require('mongoose');
-const session = require('express-session');
-var cors = require('cors');
-const jwt = require('jsonwebtoken');
-const bcrypt = require('bcrypt');
+require('dotenv').config()
+const express = require('express')
+const mongoose = require('mongoose')
+const session = require('express-session')
+var cors = require('cors')
+const jwt = require('jsonwebtoken')
+const bcrypt = require('bcrypt')
 // const passport = require('passport');
 // const passportLocalMongoose = require('passport-local-mongoose');
-const userController = require('./Routes/userController');
-const flightController = require('./Routes/flightController');
-const bodyParser = require('body-parser');
-const MongoURI =  "mongodb+srv://toukhing:" + process.env.DBPASSWORD + "@cluster0.cam3d.mongodb.net/myFirstDatabase?retryWrites=true&w=majority" ;
+const userController = require('./Routes/userController')
+const flightController = require('./Routes/flightController')
+const bodyParser = require('body-parser')
+const MongoURI =
+  'mongodb+srv://toukhing:' +
+  process.env.DBPASSWORD +
+  '@cluster0.cam3d.mongodb.net/myFirstDatabase?retryWrites=true&w=majority'
 
 //App variables
-const app = express();
-app.use(express.static("public"));
-const port = process.env.PORT || "3000";
-const User = require('./models/User');
-const Flight = require('./models/Flight');
-console.log(MongoURI);
+const app = express()
+app.use(express.static('public'))
+const port = process.env.PORT || '3000'
+const User = require('./models/User')
+const Flight = require('./models/Flight')
+console.log(MongoURI)
 // #Importing the userController
 
-app.use(cors({ exposedHeaders: ['token', 'name'] }));
-app.use(bodyParser.urlencoded({extended: true}));
-app.use(express.json());
- // To parse the incoming requests with JSON payloads// configurations
+app.use(cors({ exposedHeaders: ['token', 'name'] }))
+app.use(bodyParser.urlencoded({ extended: true }))
+app.use(express.json())
+// To parse the incoming requests with JSON payloads// configurations
 // Mongo DB
-mongoose.connect(MongoURI, { useNewUrlParser: true, useUnifiedTopology: true })
-.then(result =>console.log("MongoDB is now connected") )
-.catch(err => console.log(err));
+mongoose
+  .connect(MongoURI, { useNewUrlParser: true, useUnifiedTopology: true })
+  .then((result) => console.log('MongoDB is now connected'))
+  .catch((err) => console.log(err))
 
 // app.use(function (req, res, next) {
 //   console.log(req.headers.token);
@@ -52,24 +56,25 @@ mongoose.connect(MongoURI, { useNewUrlParser: true, useUnifiedTopology: true })
 //   );
 // });
 app.use(function (req, res, next) {
+  // Website you wish to allow to connect
+  res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3001')
 
-    // Website you wish to allow to connect
-    res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3001');
+  // Request methods you wish to allow
+  res.setHeader(
+    'Access-Control-Allow-Methods',
+    'GET, POST, OPTIONS, PUT, PATCH, DELETE'
+  )
 
-    // Request methods you wish to allow
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
+  // Request headers you wish to allow
+  res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type')
 
-    // Request headers you wish to allow
-    res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
+  // Set to true if you need the website to include cookies in the requests sent
+  // to the API (e.g. in case you use sessions)
+  res.setHeader('Access-Control-Allow-Credentials', true)
 
-    // Set to true if you need the website to include cookies in the requests sent
-    // to the API (e.g. in case you use sessions)
-    res.setHeader('Access-Control-Allow-Credentials', true);
-
-    // Pass to next layer of middleware
-    next();
-});
-
+  // Pass to next layer of middleware
+  next()
+})
 
 // passport.use(User.createStrategy());
 //
@@ -81,46 +86,50 @@ app.use(function (req, res, next) {
 
 // #Routing to usercontroller here
 
-app.post('/add-user', authenticateToken, userController.addUser);
-app.get('/view-users', authenticateToken, userController.viewUsers);
-app.get('/get-all-users/:name', userController.getUser);
-app.post('/updateUser', authenticateToken, userController.updateUser);
-app.post('/bookFlightUser', authenticateToken, userController.bookFlightUser);
-app.post('/cancelFlightUser', authenticateToken, userController.cancelFlightUser);
+app.post('/add-user', userController.addUser)
+app.get('/view-users', userController.viewUsers)
+app.post('/getUser', authenticateToken, userController.getUser)
+app.post('/updateUser', authenticateToken, userController.updateUser)
+app.post('/bookFlightUser', authenticateToken, userController.bookFlightUser)
+app.post(
+  '/cancelFlightUser',
+  authenticateToken,
+  userController.cancelFlightUser
+)
 // app.delete('/delete-user/:id',userController.deleteUser);
 
 //app.get('/add-all-flights',authenticateToken, flightController.addFlight);
-app.post('/viewAllFlights',authenticateToken, flightController.viewFlight);
-app.post('/createFlight',authenticateToken, flightController.addFlight);
-app.post('/deleteFlight',authenticateToken, flightController.deleteFlight);
-app.post('/editFlight',authenticateToken, flightController.updateFlight);
-app.post('/searchFlight',authenticateToken, flightController.getFlights);
-app.post('/searchFlightUser',authenticateToken, flightController.getFlightsUser);
-app.post('/findFlight',authenticateToken, flightController.findSpecificFlight);
-app.post('/bookFlight',authenticateToken, flightController.bookFlight);
-app.post('/cancelFlight',authenticateToken, flightController.cancelFlight);
-app.post('/getSeats',authenticateToken, flightController.getSeats);
+app.post('/viewAllFlights', authenticateToken, flightController.viewFlight)
+app.post('/createFlight', authenticateToken, flightController.addFlight)
+app.post('/deleteFlight', authenticateToken, flightController.deleteFlight)
+app.post('/editFlight', authenticateToken, flightController.updateFlight)
+app.post('/searchFlight', authenticateToken, flightController.getFlights)
+app.post('/searchFlightUser', flightController.getFlightsUser)
+app.post('/findFlight', flightController.findSpecificFlight)
+app.post('/bookFlight', authenticateToken, flightController.bookFlight)
+app.post('/cancelFlight', authenticateToken, flightController.cancelFlight)
+app.post('/getSeats', flightController.getSeats)
 // app.get('/testUpdate', flightController.testUpdate);
 // app.get('/signup', userController.signup);
 
-app.post("/login", userController.login);
-app.post("/logout", userController.logout);
+app.post('/login', userController.login)
+app.post('/logout', userController.logout)
 
 // Starting server
 app.listen(port, () => {
-    console.log(`Listening to requests on http://localhost:${port}`);
-  });
+  console.log(`Listening to requests on http://localhost:${port}`)
+})
 
 function authenticateToken(req, res, next) {
-  const token = req.headers.token;
-  if (token == null) return res.sendStatus(401);
+  const token = req.headers.token
+  if (token == null) return res.sendStatus(401)
 
   jwt.verify(token, process.env.TOKEN_SECRET, (err, user) => {
-    if (err){
-      console.log(err);
-      return res.sendStatus(403);
+    if (err) {
+      console.log(err)
+      return res.sendStatus(403)
     }
-    req.user = user;
-    next();
-  });
+    req.user = user
+    next()
+  })
 }

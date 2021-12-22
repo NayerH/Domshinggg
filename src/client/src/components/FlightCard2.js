@@ -253,11 +253,6 @@ const useStyles = makeStyles((theme) => ({
 }))
 
 export default function FlightCard2(props) {
-
-  useEffect(() => {
-    if (window.localStorage.getItem('token') === 'undefined') {
-      window.location = '/'    }
-  }, [])
   const classes = useStyles()
   const [cityFrom, setCityFrom] = React.useState(props.cityFrom || '')
   const [to, setTo] = React.useState(props.to || '')

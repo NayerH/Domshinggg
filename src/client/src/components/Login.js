@@ -136,10 +136,10 @@ export default function Login() {
         }
 
         window.localStorage.setItem('token', res.headers.token)
-        window.localStorage.setItem('isAdmin', res.data.user.isAdmin)
-        console.log(res.data.user.isAdmin)
-
-        if (res.data.user.isAdmin === true) {
+        window.localStorage.setItem('isAdmin', res.data.isAdmin)
+        console.log(res.data.isAdmin)
+        
+        if (res.data.isAdmin === true) {
           window.location = '/admin'
         } else {
           window.location = '/'

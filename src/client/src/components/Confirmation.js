@@ -15,6 +15,18 @@ import { useState } from 'react'
 import axios from 'axios'
 import Snackbar from '@material-ui/core/Snackbar'
 
+const seatsDep = window.localStorage.getItem('reservedSeatsDep')
+const seatsRet = window.localStorage.getItem('reservedSeatsRet')
+const fNumDep = parseInt(window.localStorage.getItem('depFlightNum'), 10)
+const fNumRet = parseInt(window.localStorage.getItem('retFlightNum'), 10)
+const cabin = window.localStorage.getItem('cabin')
+const retD = window.localStorage.getItem('retDate').toString()
+const depD = window.localStorage.getItem('depDate').toString()
+const depAir = window.localStorage.getItem('from')
+const retAir = window.localStorage.getItem('to')
+const priceDep = parseInt(window.localStorage.getItem('priceDep'), 10)
+const priceRet = parseInt(window.localStorage.getItem('priceRet'), 10)
+
 function Copyright() {
   return (
     <Typography variant='body2' color='textSecondary' align='center'>
@@ -101,9 +113,73 @@ export default function Confirmation() {
     if (window.localStorage.getItem('token') === 'undefined') {
       setLoginVisible('visible')
     } else {
-      console.log('khara')
-      //window.location = '/my-profile'
+      handleBooking1()
+      handleBooking2()
+      // window.location = '/my-profile'
     }
+  }
+  async function handleBooking2() {
+    console.log(window.localStorage.getItem('reservedSeatsRet'))
+    await axios
+      .post(
+        'http://localhost:3000/bookFlight',
+        {
+          retFlightNum: parseInt(
+            window.localStorage.getItem('retFlightNum'),
+            10
+          ),
+          retFlightSeats: window.localStorage.getItem('reservedSeatsRet'),
+          depFlightNum: parseInt(
+            window.localStorage.getItem('depFlightNum'),
+            10
+          ),
+          depFlightSeats: window.localStorage.getItem('reservedSeatsDep'),
+          cabin: window.localStorage.getItem('cabin'),
+        },
+        {
+          headers: {
+            token: headers,
+          },
+        }
+      )
+      .then((res) => {
+        console.log(res)
+      })
+      .catch((error) => {
+        console.log(error)
+      })
+  }
+  async function handleBooking1() {
+    const totalPrice = priceDep + priceRet
+    await axios
+      .post(
+        'http://localhost:3000/bookFlightUser',
+        {
+          retFlightNum: parseInt(
+            window.localStorage.getItem('retFlightNum'),
+            10
+          ),
+          retFlightSeats: window.localStorage.getItem('reservedSeatsRet'),
+          depFlightNum: parseInt(
+            window.localStorage.getItem('depFlightNum'),
+            10
+          ),
+          depFlightSeats: window.localStorage.getItem('reservedSeatsDep'),
+          cabin: window.localStorage.getItem('cabin'),
+          price: totalPrice,
+        },
+        {
+          headers: {
+            token: headers,
+          },
+        }
+      )
+      .then((res) => {
+        console.log(res)
+      })
+      .catch((error) => {
+        console.log(error)
+      })
   }
 
   const handleClose = (event, reason) => {
@@ -149,6 +225,8 @@ export default function Confirmation() {
 
         window.localStorage.setItem('token', res.headers.token)
         window.localStorage.setItem('name', res.headers.name)
+        handleBooking1()
+        handleBooking2()
         window.location = '/my-profile'
       })
       .catch((err) => {
@@ -172,24 +250,26 @@ export default function Confirmation() {
             <div>
               <h1>Departure Details</h1>
               <br />
-              <h2>Flight Number: </h2>
-              <h2>Departure Airport: </h2>
-              <h2>Departure Date: </h2>
-              <h2>Departure Duration: </h2>
+              <h2>Flight Number: {fNumDep} </h2>
+              <h2>Departure Airport: {depAir} </h2>
+              <h2>Departure Date: {depD} </h2>
+              <h2>Seat Numbers In Departure Flight: {seatsDep} </h2>
+              <h2>Price: EGP {priceDep} </h2>
             </div>
             <div style={{ marginLeft: '15vw' }}>
               <h1>Return Details</h1>
               <br />
-              <h2>Flight Number: </h2>
-              <h2>Return Airport: </h2>
-              <h2>Return Date: </h2>
-              <h2>Return Duration: </h2>
+              <h2>Flight Number: {fNumRet}</h2>
+              <h2>Return Airport: {retAir} </h2>
+              <h2>Return Date: {retD}</h2>
+              <h2>Seat Numbers In Return Flight: {seatsRet} </h2>
+              <h2>Price: EGP {priceRet} </h2>
             </div>
           </div>
           <br />
           <br />
-          <h2>Cabin: </h2>
-          <h2>Total Price: </h2>
+          <h2>Cabin: {cabin} </h2>
+          <h2>Total Price: EGP {priceDep + priceRet}</h2>
         </div>
         <br />
         <br />

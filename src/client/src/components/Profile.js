@@ -63,6 +63,7 @@ export default function Profile() {
   const [fullName, setFullName] = useState('')
   const [passportNum, setPassportNum] = useState('')
   const [username, setUsername] = useState('')
+  const [bookings, setBookings] = useState([])
 
   const [open2, setOpen2] = React.useState(false)
   const handleOpen2 = () => setOpen2(true)
@@ -77,22 +78,17 @@ export default function Profile() {
   const handleChangeUsername = (event) => {
     setUsername(event.target.value)
   }
-  //tokin
-  var name
   useEffect(() => {
-    name = window.localStorage.getItem('name')
-    console.log(window.localStorage.getItem('token'))
-
     if (window.localStorage.getItem('token') == 'undefined') {
       console.log('its null')
       window.location = '/'
     }
-  }, [button])
-  //useEffect to get all reservations
-  useEffect(() => {
-    axios
+  }, [])
+
+  useEffect(async () => {
+    await axios
       .post(
-        'http://localhost:5000/order/viewAllOrders',
+        'http://localhost:3000/getUser',
         {},
         {
           headers: {
@@ -101,16 +97,66 @@ export default function Profile() {
         }
       )
       .then((res) => {
-        //to loop 3ala el orders kolaha
-        for (let i = 0; i < res.data.displayedOrders.length; i++) {
-          setPrevRes(res.data.displayedOrders)
-          console.log(res.data.displayedOrders[i])
-        }
+        console.log(res.data)
+        setFullName(res.data.Name)
+        setPassportNum(res.data.passportNo)
+        setUsername(res.data.username)
+        setBookings(res.data.reservations)
       })
       .catch((error) => {
         console.log(error)
       })
-  }, [type])
+  }, [])
+
+  async function handleCancel1(pos) {
+    await axios
+      .post(
+        'http://localhost:3000/cancelFlightUser',
+        { index: pos },
+        {
+          headers: {
+            token: headers,
+          },
+        }
+      )
+      .then((res) => {
+        console.log(res)
+      })
+      .catch((error) => {
+        console.log(error)
+      })
+  }
+
+  async function handleCancel2(
+    DepartureFlightNum,
+    DepartureFlightSeats,
+    ReturnFlightNum,
+    ReturnFlightSeats,
+    Cabin
+  ) {
+    await axios
+      .post(
+        'http://localhost:3000/cancelFlight',
+        {
+          depFlightNum: DepartureFlightNum,
+          depFlightSeats: DepartureFlightSeats,
+          retFlightNum: ReturnFlightNum,
+          retFlightSeats: ReturnFlightSeats,
+          cabin: Cabin,
+        },
+        {
+          headers: {
+            token: headers,
+          },
+        }
+      )
+      .then((res) => {
+        console.log(res)
+      })
+      .catch((error) => {
+        console.log(error)
+      })
+  }
 
   return (
     <div>
@@ -120,13 +166,17 @@ export default function Profile() {
             Reservations:-
           </h1>
           <div style={{ marginTop: '4vw', marginLeft: '10vw' }}>
-            {arr.map(
-              (d) => (
+            {bookings.map(
+              (d, pos) => (
                 <div>
-                  <h4>Reservation Number: {d.reservation}</h4>
-                  <h4>Departure:{d.departure}</h4>
-                  <h4>Returnnn: {d.returnRes}</h4>
-                  <h4>Price: {d.price}</h4>
+                  <h4>Reservation Number: {d.bookingNo}</h4>
+                  <h4>Departure Flight Number:{d.DepartureFlightNum}</h4>
+                  <h4>Departure Flight Seats:{d.DepartureFlightSeats}</h4>
+                  <h4>Return Flight Number:{d.ReturnFlightNum}</h4>
+                  <h4>Return Flight Seats:{d.ReturnFlightSeats}</h4>
+                  <h4>Price: {d.Price}</h4>
+                  <h4>Cabin: {d.Cabin}</h4>
+
                   <Button onClick={handleOpen} variant='contained'>
                     {' '}
                     cancel booking
@@ -162,7 +212,17 @@ export default function Profile() {
                   </Typography>
                   <br />
                   <Button
-                    onClick={handleClose}
+                    onClick={
+                      (handleClose,
+                      handleCancel1(pos),
+                      handleCancel2(
+                        d.DepartureFlightNum,
+                        d.DepartureFlightSeats,
+                        d.ReturnFlightNum,
+                        d.ReturnFlightSeats,
+                        d.Cabin
+                      ))
+                    }
                     style={{ marginLeft: '6vw' }}
                     variant='contained'
                   >
@@ -183,9 +243,9 @@ export default function Profile() {
         <div>
           <h1 style={{ marginTop: '5vw', marginLeft: '30vw' }}>Profile:-</h1>
           <div style={{ marginTop: '4vw', marginLeft: '30vw' }}>
-            <h3>Full Name:</h3>
-            <h3>Passport Number:</h3>
-            <h3>Username:</h3>
+            <h3>Full Name:{fullName}</h3>
+            <h3>Passport Number:{passportNum}</h3>
+            <h3>Username: {username}</h3>
             <Button
               onClick={handleOpen2}
               variant='contained'
