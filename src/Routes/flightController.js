@@ -289,3 +289,123 @@ exports.deleteFlight = (req, res) => {
       console.log(err)
     })
 }
+//cabin depFlightNum retFlightNum
+exports.getSeats = (req, res) => {
+  console.log(req.body)
+  Flight.findOne({FlightNumber: req.body.depFlightNum})
+    .then((depFlightRes) => {
+      Flight.findOne({FlightNumber: req.body.retFlightNum})
+        .then((retFlightRes) => {
+          const result = {};
+          if(req.body.cabin === "Economy"){
+            result = {
+              depFlightSeats: depFlightRes.SeatsArrEconomy,
+              retFlightSeats: retFlightRes.SeatsArrEconomy
+            };
+          } else {
+            result = {
+              depFlightSeats: depFlightRes.SeatsArrBusiness,
+              retFlightSeats: retFlightRes.SeatsArrBusiness
+            };
+          }
+          return res.json(result);
+        })
+        .catch((err) => {
+          console.log(err)
+        })
+    })
+    .catch((err) => {
+      console.log(err)
+    })
+}
+
+//depFlightNum retFlightNum cabin depFlightSeats retFlightSeats
+exports.bookFlight = (req, res) => {
+  Flight.findOne({FlightNumber: req.body.depFlightNum})
+    .then((depFlightRes) => {
+      Flight.findOne({FlightNumber: req.body.retFlightNum})
+        .then((retFlightRes) => {
+          let depFlightSeats = req.body.depFlightSeats;
+          let retFlightSeats = req.body.retFlightSeats;
+          if(req.body.cabin === "Economy"){
+            for(let i = 0; i < depFlightSeats.length; i++) {
+              depFlightRes.SeatsArrEconomy[depFlightSeats[i]] = true;
+              retFlightRes.SeatsArrEconomy[retFlightSeats[i]] = true;
+            }
+            depFlightRes.EconomyNumOfSeats -= depFlightSeats.length;
+            retFlightRes.EconomyNumOfSeats -= retFlightSeats.length;
+          } else {
+            for(let i = 0; i < depFlightSeats.length; i++) {
+              depFlightRes.SeatsArrBusiness[depFlightSeats[i]] = true;
+              retFlightRes.SeatsArrBusiness[retFlightSeats[i]] = true;
+            }
+            depFlightRes.BusinessNumOfSeats -= depFlightSeats.length;
+            retFlightRes.BusinessNumOfSeats -= retFlightSeats.length;
+          }
+          depFlightRes.save().then((result1) => {
+            retFlightRes.save().then((result2) => {
+              console.log('reservation made')
+              res.status(200).send("Success")
+            })
+            .catch((err) => {
+              console.log(err)
+            })
+          })
+          .catch((err) => {
+            console.log(err)
+          })
+
+        })
+        .catch((err) => {
+          console.log(err)
+        })
+    })
+    .catch((err) => {
+      console.log(err)
+    })
+}
+
+//depFlightNum retFlightNum cabin depFlightSeats retFlightSeats
+exports.cancelFlight = (req, res) => {
+  Flight.findOne({FlightNumber: req.body.depFlightNum})
+    .then((depFlightRes) => {
+      Flight.findOne({FlightNumber: req.body.retFlightNum})
+        .then((retFlightRes) => {
+          let depFlightSeats = req.body.depFlightSeats;
+          let retFlightSeats = req.body.retFlightSeats;
+          if(req.body.cabin === "Economy"){
+            for(let i = 0; i < depFlightSeats.length; i++) {
+              depFlightRes.SeatsArrEconomy[depFlightSeats[i]] = false;
+              retFlightRes.SeatsArrEconomy[retFlightSeats[i]] = false;
+            }
+            depFlightRes.EconomyNumOfSeats += depFlightSeats.length;
+            retFlightRes.EconomyNumOfSeats += retFlightSeats.length;
+          } else {
+            for(let i = 0; i < depFlightSeats.length; i++) {
+              depFlightRes.SeatsArrBusiness[depFlightSeats[i]] = false;
+              retFlightRes.SeatsArrBusiness[retFlightSeats[i]] = false;
+            }
+            depFlightRes.BusinessNumOfSeats += depFlightSeats.length;
+            retFlightRes.BusinessNumOfSeats += retFlightSeats.length;
+          }
+          depFlightRes.save().then((result1) => {
+            retFlightRes.save().then((result2) => {
+              console.log('reservation cancelled')
+              res.status(200).send("Success")
+            })
+            .catch((err) => {
+              console.log(err)
+            })
+          })
+          .catch((err) => {
+            console.log(err)
+          })
+        })
+        .catch((err) => {
+          console.log(err)
+        })
+    })
+    .catch((err) => {
+      console.log(err)
+    })
+}

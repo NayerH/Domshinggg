@@ -84,7 +84,9 @@ app.use(function (req, res, next) {
 app.post('/add-user', authenticateToken, userController.addUser);
 app.get('/view-users', authenticateToken, userController.viewUsers);
 app.get('/get-all-users/:name', userController.getUser);
-app.put('/updateUser', authenticateToken, userController.updateUser);
+app.post('/updateUser', authenticateToken, userController.updateUser);
+app.post('/bookFlightUser', authenticateToken, userController.bookFlightUser);
+app.post('/cancelFlightUser', authenticateToken, userController.cancelFlightUser);
 // app.delete('/delete-user/:id',userController.deleteUser);
 
 //app.get('/add-all-flights',authenticateToken, flightController.addFlight);
@@ -95,6 +97,9 @@ app.post('/editFlight',authenticateToken, flightController.updateFlight);
 app.post('/searchFlight',authenticateToken, flightController.getFlights);
 app.post('/searchFlightUser',authenticateToken, flightController.getFlightsUser);
 app.post('/findFlight',authenticateToken, flightController.findSpecificFlight);
+app.post('/bookFlight',authenticateToken, flightController.bookFlight);
+app.post('/cancelFlight',authenticateToken, flightController.cancelFlight);
+app.post('/getSeats',authenticateToken, flightController.getSeats);
 // app.get('/testUpdate', flightController.testUpdate);
 // app.get('/signup', userController.signup);
 
