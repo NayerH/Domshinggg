@@ -48,7 +48,7 @@ exports.viewUsers = (req, res) => {
     };
 
 exports.getUser = (req, res) => {
-  User.find({username:req.user.username})
+  User.find({username:req.user.user.username})
     .then(result => {
       res.send(result);
     })
@@ -57,6 +57,7 @@ exports.getUser = (req, res) => {
     });
 };
 
+//Name passportNo username
 exports.updateUser = (req,res)=>{
   updateUser = {};
   if(req.body.Name != ""){
@@ -68,7 +69,7 @@ exports.updateUser = (req,res)=>{
   if(req.body.username != ""){
     updateUser.username = req.body.username;
   }
-  User.findByIdAndUpdate(req.body.id,updateUser).then(result =>{
+  User.updateOne({username: req.user.user.username},updateUser).then(result =>{
 
       res.status(200).send("User updated ");
       console.log('The User is Updated successfully !');
@@ -218,7 +219,7 @@ exports.bookFlightUser = (req, res) => {
     Price: req.body.price,
     bookingNo: Math.floor(Math.random() * 1000)
   };
-  User.findOne({username: req.user.username}).then((user) => {
+  User.findOne({username: req.user.user.username}).then((user) => {
     user.reservations.push(reservation);
     user.save().then((result) => {
       console.log(result);
