@@ -2,6 +2,15 @@
 const User = require('../models/User');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
+const nodemailer = require('nodemailer');
+
+var transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+    user: 'nayersanad@gmail.com',
+    pass: process.env.GMAIL_PASSWORD
+  }
+});
 // const passport = require('passport');
 // const passportLocalMongoose = require('passport-local-mongoose');
 
@@ -38,16 +47,17 @@ exports.viewUsers = (req, res) => {
       });
     };
 
-    exports.getUser = (req, res) => {
-      User.find({Name:req.params.name})
-        .then(result => {
-          res.send(result);
-        })
-        .catch(err => {
-          console.log(err);
-        });
-    };
+exports.getUser = (req, res) => {
+  User.find({username:req.user.user.username})
+    .then(result => {
+      res.send(result);
+    })
+    .catch(err => {
+      console.log(err);
+    });
+};
 
+//Name passportNo username
 exports.updateUser = (req,res)=>{
   updateUser = {};
   if(req.body.Name != ""){
@@ -59,7 +69,7 @@ exports.updateUser = (req,res)=>{
   if(req.body.username != ""){
     updateUser.username = req.body.username;
   }
-  User.findByIdAndUpdate(req.body.id,updateUser).then(result =>{
+  User.updateOne({username: req.user.user.username},updateUser).then(result =>{
 
       res.status(200).send("User updated ");
       console.log('The User is Updated successfully !');
@@ -109,9 +119,7 @@ exports.login = async (req, res) => {
 
           res.setHeader('token', token);
           res.setHeader('isAdmin', isAdmin);
-          return res.json({
-            user,
-          });
+          return res.json(user);
         } else {
           return res.json({ message: 'wrong password' });
         }
@@ -193,4 +201,62 @@ console.log("METHOD ACTIVE");
       });
     }
   }
+};
+
+//retFlight(fNum,seats) depFlight(fNum,seats) cabin price
+exports.bookFlightUser = (req, res) => {
+  console.log(req.user);
+  let reservation = {
+    ReturnFlight: {
+      fNum: req.body.retFlightNum,
+      seats:req.body.retFlightSeats
+    },
+    DepartureFlight: {
+      fNum: req.body.depFlightNum,
+      seats:req.body.depFlightSeats
+    },
+    Cabin: req.body.cabin,
+    Price: req.body.price,
+    bookingNo: Math.floor(Math.random() * 1000)
+  };
+  User.findOne({username: req.user.user.username}).then((user) => {
+    user.reservations.push(reservation);
+    user.save().then((result) => {
+      console.log(result);
+      return res.json(result);
+    });
+  }).catch(err => {
+    console.log(err);
+  });
+};
+
+//index
+exports.cancelFlightUser = (req, res) => {
+  console.log(req.user.user);
+  User.findOne({
+    username: req.user.user.username
+  }).then((user) => {
+    let reservation = user.reservations[req.body.index];
+    user.reservations.splice(req.body.index, 1);
+    user.save().then((result) => {
+      console.log(result);
+      var mailOptions = {
+        from: 'nayersanad@gmail.com',
+        to: 'nayerhany@gmail.com',
+        subject: 'Booking Cancellation Confirmation',
+        text: 'This email is to confirm the cancellation of Reservation Number ' + reservation.bookingNo + ' and that the amount of ' + reservation.Price + ' is to be refunded.'
+      };
+
+      transporter.sendMail(mailOptions, function(error, info) {
+        if (error) {
+          console.log(error);
+        } else {
+          console.log('Email sent: ' + info.response);
+        }
+      });
+      return res.json(result);
+    });
+  }).catch(err => {
+    console.log(err);
+  });
 };
