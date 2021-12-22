@@ -2,7 +2,6 @@ import React from 'react'
 import NavBar from './NavBar'
 import { useEffect } from 'react'
 import axios from 'axios'
-import { Alert } from '@material-ui/lab'
 import { makeStyles } from '@material-ui/core/styles'
 import { Snackbar } from '@material-ui/core'
 import FlightCard from '../components/FlightCard'
@@ -10,17 +9,17 @@ import Box from '@mui/material/Box'
 import AdapterDateFns from '@mui/lab/AdapterDateFns'
 import Button from '@mui/material/Button'
 import TextField from '@mui/material/TextField'
-import LocalizationProvider from '@mui/lab/LocalizationProvider'
-import DatePicker from '@mui/lab/DatePicker'
-import Stack from '@mui/material/Stack'
-import { useHistory } from 'react-router-dom'
 import InputLabel from '@mui/material/InputLabel'
 import MenuItem from '@mui/material/MenuItem'
 import FormControl from '@mui/material/FormControl'
 import Select from '@mui/material/Select'
 import FlightCard2 from './FlightCard2'
+import Stack from '@mui/material/Stack'
+import MuiAlert from '@mui/material/Alert'
 
-const arr = ['spray', 'limit', 'elite', 'exuberant', 'destruction', 'present']
+const Alert = React.forwardRef(function Alert(props, ref) {
+  return <MuiAlert elevation={6} ref={ref} variant='filled' {...props} />
+})
 
 const useStyles = makeStyles({
   root: {
@@ -49,7 +48,9 @@ const useStyles = makeStyles({
     marginTop: '2vw',
   },
 })
-
+const cabin = ''
+var clicksDep = 0
+var clicksArr = 0
 const departure = [
   {
     fNum: 123,
@@ -70,7 +71,6 @@ const departure = [
     BaggageAllowance: '2',
   },
 ]
-
 const ret = [
   {
     fNum: 789,
@@ -95,10 +95,8 @@ const ret = [
 export default function Home() {
   const classes = useStyles()
   const headers = window.localStorage.getItem('token')
-
   const [flightsArrayDep, setFlightsArrayDep] = React.useState([])
   const [flightsArrayRet, setFlightsArrayRet] = React.useState([])
-  const [error, setError] = React.useState('')
   const [open, setOpen] = React.useState(false)
   const [depFlag, setDepFlag] = React.useState(false)
   const [retFlag, setRetFlag] = React.useState(false)
@@ -110,29 +108,47 @@ export default function Home() {
   const [depDate, setDepDate] = React.useState('')
   const [arrDate, setArrDate] = React.useState('')
   const [cabin, setCabin] = React.useState('')
+  const [depFlight, setDepFlight] = React.useState('')
+  const [retFlight, setRetFlight] = React.useState('')
+  const [disable, setDisable] = React.useState(true)
 
+  const handleClick = () => {
+    setOpen(true)
+  }
+  const handleClose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return
+    }
+
+    setOpen(false)
+  }
   const handleSelected = (fNum) => {
-    for (var i = 0; i < departure.length; i++) {
-      if (depFlag === false) {
-        if (departure[i].fNum === 123) {
+    for (var i = 0; i < flightsArrayDep.length; i++) {
+      if (flightsArrayDep[i].FlightNumber === fNum) {
+        if (depFlag === false) {
           setDepFlag(true)
-          console.log('Done 1')
+          setDepFlight(fNum)
+          console.log('Done 1:' + fNum)
+        } else {
+          setDepFlag(false)
+          setDepFlight('')
+          console.log('Unselect 1 ' + fNum)
         }
       }
     }
-    for (var i = 0; i < ret.length; i++) {
-      if (retFlag === false) {
-        if (ret[i].fNum === 321) {
+    for (var i = 0; i < flightsArrayRet.length; i++) {
+      if (flightsArrayRet[i].FlightNumber === fNum) {
+        if (retFlag === false) {
           setRetFlag(true)
-          console.log('Done 2')
+          setRetFlight(fNum)
+          console.log('Done 2 ' + fNum)
+        } else {
+          setRetFlag(false)
+          console.log('Unselect 2 ' + fNum)
+          setRetFlight('')
         }
       }
     }
-    if (depFlag === true && retFlag === true) {
-      setFinalFlag(true)
-    }
-    setDepFlag(false)
-    setRetFlag(false)
   }
   const handleChangeChildren = (event) => {
     setChildren(event.target.value)
@@ -155,19 +171,13 @@ export default function Home() {
   const handleChangeCabin = (event) => {
     setCabin(event.target.value)
   }
-  const handleClick = () => {
-    setOpen(true)
-  }
-
-  const handleButton = () => {
-    const result = arr.filter((flight) => flight.length === 9)
-    if (result.length === 0) {
-      console.log('not found')
+  const handleClickBook = () => {
+    if (depFlag === true && retFlag === true) {
+      window.location = '/chooseSeats'
     } else {
-      console.log('found')
+      handleClick()
     }
   }
-
   const handleSearch = async (
     adults,
     children,
@@ -196,9 +206,12 @@ export default function Home() {
         }
       )
       .then((res) => {
-        console.log(res.data)
-        // setFlightsArrayDep(res.data.departureFlights)
-        // setFlightsArrayRet(res.data.returnFlights)
+        setDepFlag(false)
+        setRetFlag(false)
+        console.log(res.data.cabin)
+        setFlightsArrayDep(res.data.depFlights)
+        setFlightsArrayRet(res.data.arrFlights)
+        cabin = res.data.cabin
       })
       .catch((error) => {
         console.log(error)
@@ -262,8 +275,8 @@ export default function Home() {
                 label='cabin'
                 onChange={handleChangeCabin}
               >
-                <MenuItem value={10}>Economy</MenuItem>
-                <MenuItem value={20}>Business</MenuItem>
+                <MenuItem value={'Economy'}>Economy</MenuItem>
+                <MenuItem value={'Business'}>Business</MenuItem>
               </Select>
             </FormControl>
           </Box>
@@ -306,40 +319,53 @@ export default function Home() {
         </div>
         <div className={classes.flights}>
           <h2>Departure Flights</h2>
-          <FlightCard2 handleSelected={handleSelected} />
-          {/* {flightsArrayDep.map((d) => (
+          {/* <FlightCard2 handleSelected={handleSelected} /> */}
+          {flightsArrayDep.map((d) => (
             <FlightCard2
               handleSelected={handleSelected}
-              fNum={d.fNum}
+              fNum={d.FlightNumber}
               arrTime={d.ArrivalTime.toString().substring(11, 19)}
               depTime={d.DepartureTime.toString().substring(11, 19)}
-              cabin={d.cabin}
-              price={d.price}
+              cabin={cabin}
+              price={d.Price}
+              duration={d.TripDuration}
+              baggage={d.Baggage}
               id={d._id}
               key={d._id}
             />
-          ))} */}
+          ))}
         </div>
         <div className={classes.flights}>
           <h2>Return Flights</h2>
-          <FlightCard2 handleSelected={handleSelected} />
-          {/* {flightsArrayRet.map((d) => (
+          {/* <FlightCard2 handleSelected={handleSelected} /> */}
+          {flightsArrayRet.map((d) => (
             <FlightCard2
               handleSelected={handleSelected}
-              fNum={d.fNum}
+              fNum={d.FlightNumber}
               arrTime={d.ArrivalTime.toString().substring(11, 19)}
               depTime={d.DepartureTime.toString().substring(11, 19)}
-              cabin={d.cabin}
-              price={d.price}
+              cabin={cabin}
+              price={d.Price}
+              duration={d.TripDuration}
+              baggage={d.Baggage}
               id={d._id}
               key={d._id}
             />
-          ))} */}
-          <div className={classes.book}>
-            <Button disabled={!finalFlag} variant='contained'>
-              Book
-            </Button>
+          ))}
+          <div onClick={handleClickBook} className={classes.book}>
+            <Button variant='contained'>Book</Button>
           </div>
+          <Stack spacing={2} sx={{ width: '100%' }}>
+            <Snackbar open={open} autoHideDuration={2000} onClose={handleClose}>
+              <Alert
+                onClose={handleClose}
+                severity='warning'
+                sx={{ width: '100%' }}
+              >
+                Please select departure and return flights!
+              </Alert>
+            </Snackbar>
+          </Stack>
         </div>
       </div>
     </div>

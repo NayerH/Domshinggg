@@ -33,6 +33,7 @@ const useStyles = makeStyles({
   },
   backColor: {
     backgroundColor: 'white',
+    height: '5vw',
   },
   user: {
     marginLeft: isMobile ? '0vw' : '2vw',
@@ -137,12 +138,6 @@ export default function NavBar(props) {
           Contact Us
         </Button>
         <br />
-        <Button
-          style={{ marginLeft: '5vw', marginTop: '1vw', marginBottom: '1vw' }}
-          onClick={handleMyAccount}
-        >
-          My Profile
-        </Button>
       </div>
     </Box>
   )
@@ -184,7 +179,7 @@ export default function NavBar(props) {
   const classes = useStyles()
   const handleHome = (e) => {
     e.preventDefault()
-    window.location = '/home'
+    window.location = '/'
   }
   const handleShop = (e) => {
     e.preventDefault()
@@ -194,18 +189,11 @@ export default function NavBar(props) {
     e.preventDefault()
     window.location = '/contact-us'
   }
-  const handleMyAccount = (e) => {
+  const handleProfile = (e) => {
     e.preventDefault()
     window.location = '/my-profile'
   }
-  const handleMyCart = (e) => {
-    e.preventDefault()
-    window.location = '/my-cart'
-  }
-  const handleAddProduct = (e) => {
-    e.preventDefault()
-    window.location = '/add-product'
-  }
+
   return (
     <div className={classes.root}>
       <AppBar id='navbar' position='static' className={classes.backColor}>
@@ -226,15 +214,32 @@ export default function NavBar(props) {
             <Button
               id='signout'
               color='black'
+              onClick={handleProfile}
+              style={{
+                visibility: 'visible',
+                fontSize: '1vw',
+                marginRight: '3vw',
+                width: '8vw',
+                marginTop: '2vw',
+                marginLeft: '-10vw',
+              }}
+            >
+              Profile
+            </Button>
+            <Button
+              id='signout'
+              color='black'
               onClick={signout}
               style={{
                 visibility: 'visible',
                 fontSize: '1vw',
                 marginRight: '3vw',
                 width: '8vw',
+                marginTop: '-5vw',
+                marginRight: '5vw',
               }}
             >
-              Sign out
+              SIGN OUT
             </Button>
             {['Menu'].map((anchor) => (
               <React.Fragment key={anchor}>

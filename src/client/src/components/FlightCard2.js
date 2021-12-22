@@ -266,10 +266,12 @@ export default function FlightCard2(props) {
   const [to, setTo] = React.useState(props.to || '')
   const [fDate, setFDate] = React.useState(props.fDate || '')
   const [fNum, setFNum] = React.useState(props.fNum || '')
-  const [price, setPrice] = React.useState(props.fNum || '')
+  const [price, setPrice] = React.useState(props.price || '')
   const [arrTime, setArrTime] = React.useState(props.arrTime || '')
   const [depTime, setDepTime] = React.useState(props.depTime || '')
   const [cabin, setCabin] = React.useState(props.cabin || '')
+  const [baggage, setBaggage] = React.useState(props.baggage || '')
+  const [duration, setDuration] = React.useState(props.duration || '')
   const [id, setId] = React.useState(-1)
   const [edit, setEdit] = React.useState(false)
   const [error, setError] = React.useState('')
@@ -381,12 +383,11 @@ export default function FlightCard2(props) {
                         <CardContent>
                           <FormControlLabel
                             control={
-                              <IOSSwitch
-                                sx={{ m: 1 }}
-                                defaultUnChecked
+                              <Checkbox
                                 onChange={() => {
                                   props.handleSelected(props.fNum)
                                 }}
+                                {...label}
                               />
                             }
                             label='Select Flight'
@@ -421,14 +422,14 @@ export default function FlightCard2(props) {
                             disabled
                             className={classes.cabin}
                             id='standard-password-input'
-                            label='Cabin Class'
+                            label='Cabin'
                             value={cabin}
                           />
                           <TextField
                             disabled
                             className={classes.fNum}
                             id='standard-password-input'
-                            label='Price'
+                            label='Price (EGP)'
                             value={price}
                           />
                           <br />
@@ -450,6 +451,7 @@ export default function FlightCard2(props) {
                             anchorEl={anchorElDet}
                             open={openDet}
                             onClose={handleCloseDet}
+                            style={{ width: '100vw' }}
                             anchorOrigin={{
                               vertical: 'top',
                               horizontal: 'left',
@@ -459,12 +461,22 @@ export default function FlightCard2(props) {
                               horizontal: 'left',
                             }}
                           >
-                            <MenuItem onClick={handleCloseDet}>
-                              Trip Duration: 
-                            </MenuItem>
-                            <MenuItem onClick={handleCloseDet}>
-                              Baggage Allowance:
-                            </MenuItem>
+                            <TextField
+                              disabled
+                              className={classes.fNum}
+                              id='standard-password-input'
+                              label='Baggage'
+                              value={baggage}
+                            />
+                            <br />
+                            <TextField
+                              disabled
+                              className={classes.fNum}
+                              id='standard-password-input'
+                              label='Trip Duration'
+                              value={duration}
+                            />
+                            <br />
                           </Menu>
                         </CardContent>
                       </Card>
