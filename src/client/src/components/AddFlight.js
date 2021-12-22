@@ -13,7 +13,6 @@ import TextField from '@mui/material/TextField'
 import LocalizationProvider from '@mui/lab/LocalizationProvider'
 import DatePicker from '@mui/lab/DatePicker'
 import Stack from '@mui/material/Stack'
-import { useHistory } from 'react-router-dom'
 
 const useStyles = makeStyles({
   root: {
@@ -53,7 +52,6 @@ export default function AddFlight() {
   const [busSeats, setBusSeats] = React.useState('')
   const [ecoSeats, setEcoSeats] = React.useState('')
 
-  const history = useHistory()
   const handleChangeTo = (event) => {
     setTo(event.target.value)
   }
@@ -93,7 +91,7 @@ export default function AddFlight() {
   useEffect(() => {
     if (window.localStorage.getItem('token') === 'undefined') {
       console.log('its null')
-      history.push('/')
+      window.location = '/'
     } else {
       axios
         .post(
@@ -114,91 +112,112 @@ export default function AddFlight() {
     }
   }, [change])
 
-  const handleSearch = async (cityFrom, to, fNum, fDate,arrTime,depTime,busSeats,ecoSeats) => {
-    console.log(fDate);
-    const res = await axios.post(
-      'http://localhost:3000/searchFlight',
-      {
-        cityFrom: cityFrom,
-        to: to,
-        fNum: fNum,
-        fDate: fDate,
-        arrTime:arrTime,
-        depTime:depTime,
-        busSeats:busSeats,
-        ecoSeats:ecoSeats
-      },
-      {
-        headers: {
-          token: headers,
+  const handleSearch = async (
+    cityFrom,
+    to,
+    fNum,
+    fDate,
+    arrTime,
+    depTime,
+    busSeats,
+    ecoSeats
+  ) => {
+    console.log(fDate)
+    const res = await axios
+      .post(
+        'http://localhost:3000/searchFlight',
+        {
+          cityFrom: cityFrom,
+          to: to,
+          fNum: fNum,
+          fDate: fDate,
+          arrTime: arrTime,
+          depTime: depTime,
+          busSeats: busSeats,
+          ecoSeats: ecoSeats,
         },
-      }
-    ).then((res) => {
-      console.log(res.data);
-      setFlightsArray(res.data)
-    })
-    .catch((error) => {
-      console.log(error)
-    })
+        {
+          headers: {
+            token: headers,
+          },
+        }
+      )
+      .then((res) => {
+        console.log(res.data)
+        setFlightsArray(res.data)
+      })
+      .catch((error) => {
+        console.log(error)
+      })
     //IDK
   }
 
-  const handleAddFlightCard = async (cityFrom, to, fNum, fDate,arrTime,depTime,busSeats,ecoSeats) => {
-
-    const res = await axios.post(
-      'http://localhost:3000/createFlight',
-      {
-        to: to,
-        cityFrom: cityFrom,
-        fNum: fNum,
-        fDate: fDate,
-        arrTime:arrTime,
-        depTime:depTime,
-        busSeats:busSeats,
-        ecoSeats:ecoSeats
-      },
-      {
-        headers: {
-          token: headers,
+  const handleAddFlightCard = async (
+    cityFrom,
+    to,
+    fNum,
+    fDate,
+    arrTime,
+    depTime,
+    busSeats,
+    ecoSeats
+  ) => {
+    const res = await axios
+      .post(
+        'http://localhost:3000/createFlight',
+        {
+          to: to,
+          cityFrom: cityFrom,
+          fNum: fNum,
+          fDate: fDate,
+          arrTime: arrTime,
+          depTime: depTime,
+          busSeats: busSeats,
+          ecoSeats: ecoSeats,
         },
-      }
-    ).then((res) => {
-      console.log(res.data);
-      console.log('flight added')
-      if (res.data.error) {
-        setSeverityState('warning')
-        setError(res.data.error)
-        handleClick()
-        setOpen(true)
-      }
-      if (res.data.message) {
-        setSeverityState('success')
-        setError('Flight Added Succesfuly')
-        handleClick()
-        setOpen(true)
-      }
-      console.log(res);
-      if (!res.error && !res.data.error) {
-        setChange((prev) => !prev)
-        console.log('adding', flightsArray)
-      } else {
-        console.log(res.data.error)
-      }
-      // var flArray = this.state.flightsArray;
-      // flArray.add(res.data)
-      // setFlightsArray(flArray)
-      // console.log(res.data);
-    })
-    .catch((error) => {
-      console.log(error)
-    })
+        {
+          headers: {
+            token: headers,
+          },
+        }
+      )
+      .then((res) => {
+        console.log(res.data)
+        console.log('flight added')
+        if (res.data.error) {
+          setSeverityState('warning')
+          setError(res.data.error)
+          handleClick()
+          setOpen(true)
+        }
+        if (res.data.message) {
+          setSeverityState('success')
+          setError('Flight Added Succesfuly')
+          handleClick()
+          setOpen(true)
+        }
+        console.log(res)
+        if (!res.error && !res.data.error) {
+          setChange((prev) => !prev)
+          console.log('adding', flightsArray)
+        } else {
+          console.log(res.data.error)
+        }
+        // var flArray = this.state.flightsArray;
+        // flArray.add(res.data)
+        // setFlightsArray(flArray)
+        // console.log(res.data);
+      })
+      .catch((error) => {
+        console.log(error)
+      })
   }
 
   const handleDeleteFlightCard = async (id) => {
     const res = await axios.post(
       'http://localhost:3000/deleteFlight',
       {
-        id:id
+        id: id,
       },
       {
         headers: {
@@ -212,7 +231,6 @@ export default function AddFlight() {
 
   return (
     <div style={{ height: '100%' }}>
-      <NavBar />
       <div className={classes.disp}>
         <div>
           <br />
@@ -241,9 +259,9 @@ export default function AddFlight() {
             required
             className={classes.box}
             id='outlined-basic'
-            label='Flight Date'
+            label=''
             onChange={handleChangeFDate}
-            type="date"
+            type='date'
           />
           <br />
           <br />
@@ -266,36 +284,45 @@ export default function AddFlight() {
           <br />
           <br />
           <TextField
-              className={classes.box}
-              id='outlined-basic'
-              onChange={handleChangeDepTime}
-              label='Departure Time'
-              variant='outlined'
-            />
+            className={classes.box}
+            id='outlined-basic'
+            onChange={handleChangeDepTime}
+            label='Departure Time'
+            variant='outlined'
+          />
           <br />
           <br />
-            <TextField
-              className={classes.box}
-              id='outlined-basic'
-              onChange={handleChangeBusSeats}
-              label='Business Seats'
-              variant='outlined'
-            />
-            <br />
-            <br />
-              <TextField
-                className={classes.box}
-                id='outlined-basic'
-                onChange={handleChangeEcoSeats}
-                label='Economy Seats'
-                variant='outlined'
-              />
-              <br />
-              <br />
+          <TextField
+            className={classes.box}
+            id='outlined-basic'
+            onChange={handleChangeBusSeats}
+            label='Business Seats'
+            variant='outlined'
+          />
+          <br />
+          <br />
+          <TextField
+            className={classes.box}
+            id='outlined-basic'
+            onChange={handleChangeEcoSeats}
+            label='Economy Seats'
+            variant='outlined'
+          />
+          <br />
+          <br />
           <Button
             variant='contained'
             onClick={() => {
-              handleSearch(cityFrom, to, fNum, fDate,arrTime,depTime,busSeats,ecoSeats)
+              handleSearch(
+                cityFrom,
+                to,
+                fNum,
+                fDate,
+                arrTime,
+                depTime,
+                busSeats,
+                ecoSeats
+              )
             }}
           >
             Search
@@ -331,9 +358,9 @@ export default function AddFlight() {
                 to={d.To}
                 cityFrom={d.From}
                 fNum={d.FlightNumber}
-                fDate={d.FlightDate.toString().substring(0,10)}
-                arrTime={d.ArrivalTime.toString().substring(11,19)}
-                depTime={d.DepartureTime.toString().substring(11,19)}
+                fDate={d.FlightDate.toString().substring(0, 10)}
+                arrTime={d.ArrivalTime.toString().substring(11, 19)}
+                depTime={d.DepartureTime.toString().substring(11, 19)}
                 busSeats={d.BusinessNumOfSeats}
                 ecoSeats={d.EconomyNumOfSeats}
                 id={d._id}

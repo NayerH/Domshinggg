@@ -5,7 +5,6 @@ import AppBar from '@material-ui/core/AppBar'
 import Toolbar from '@material-ui/core/Toolbar'
 import Button from '@material-ui/core/Button'
 import IconButton from '@material-ui/core/IconButton'
-import { useHistory } from 'react-router-dom'
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart'
 import PersonIcon from '@mui/icons-material/Person'
 import { isMobile } from 'react-device-detect'
@@ -76,14 +75,24 @@ const useStyles = makeStyles({
 
 export default function NavBar(props) {
   const [coll, setColl] = React.useState('')
+  const [loggedIn, setLoggedIn] = useState('')
+  const [loggedOut, setLoggedOut] = useState('')
 
+  useEffect(() => {
+    if (window.localStorage.getItem('token') === 'undefined') {
+      setLoggedIn('none')
+      setLoggedOut('')
+    } else {
+      setLoggedIn('')
+      setLoggedOut('none')
+    }
+  }, [loggedIn, loggedOut])
   const handleChange = (event) => {
     setColl(event.target.value)
   }
 
   const [productsArray, setProductsArray] = React.useState([])
   const [type] = useState(false)
-  const history = useHistory()
   const [state, setState] = React.useState({
     right: false,
   })
@@ -123,39 +132,16 @@ export default function NavBar(props) {
           Home
         </Button>
         <br />
-        <Button
-          style={{ marginLeft: '5vw', marginTop: '1vw', marginBottom: '1vw' }}
-          onClick={handleShop}
-        >
-          Shop
-        </Button>
 
         <br />
-        <Button
-          style={{ marginLeft: '5vw', marginTop: '1vw', marginBottom: '1vw' }}
-          onClick={handleContactUs}
-        >
-          Contact Us
-        </Button>
+
         <br />
       </div>
     </Box>
   )
-
-  // useEffect(() => {
-  //   if (type === false) {
-  //     axios
-  //       .post('http://localhost:5000/product/viewAllProducts', {}, {})
-  //       .then((res) => {
-  //         setProductsArray(res.data.displayedProducts)
-  //         props.setData(res.data.displayedProducts)
-  //       })
-  //       .catch((error) => {
-  //         console.log(error)
-  //       })
-  //   }
-  // }, [type])
-
+  const signin = async () => {
+    window.location = '/login'
+  }
   const signout = async () => {
     await axios
       .post(
@@ -170,7 +156,7 @@ export default function NavBar(props) {
       .then((res) => {
         if (res.data.status === 0) {
           window.localStorage.setItem('token', 'undefined')
-          history.push('/')
+          window.location = '/'
         } else {
           //DISPLAY ERROR
         }
@@ -180,14 +166,6 @@ export default function NavBar(props) {
   const handleHome = (e) => {
     e.preventDefault()
     window.location = '/'
-  }
-  const handleShop = (e) => {
-    e.preventDefault()
-    window.location = '/collection'
-  }
-  const handleContactUs = (e) => {
-    e.preventDefault()
-    window.location = '/contact-us'
   }
   const handleProfile = (e) => {
     e.preventDefault()
@@ -216,7 +194,7 @@ export default function NavBar(props) {
               color='black'
               onClick={handleProfile}
               style={{
-                visibility: 'visible',
+                display: loggedIn,
                 fontSize: '1vw',
                 marginRight: '3vw',
                 width: '8vw',
@@ -231,7 +209,7 @@ export default function NavBar(props) {
               color='black'
               onClick={signout}
               style={{
-                visibility: 'visible',
+                display: loggedIn,
                 fontSize: '1vw',
                 marginRight: '3vw',
                 width: '8vw',
@@ -241,6 +219,22 @@ export default function NavBar(props) {
             >
               SIGN OUT
             </Button>
+            <Button
+              id='signout'
+              color='black'
+              onClick={signin}
+              style={{
+                display: loggedOut,
+                fontSize: '1vw',
+                marginRight: '3vw',
+                width: '8vw',
+                marginTop: '-5vw',
+                marginRight: '5vw',
+              }}
+            >
+              SIGN IN
+            </Button>
+
             {['Menu'].map((anchor) => (
               <React.Fragment key={anchor}>
                 <Button

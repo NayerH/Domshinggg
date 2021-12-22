@@ -12,7 +12,6 @@ import MenuItem from '@mui/material/MenuItem'
 import { Alert } from '@material-ui/lab'
 import { Snackbar } from '@material-ui/core'
 import Modal from '@material-ui/core/Modal'
-import { useHistory } from 'react-router'
 import Button from '@material-ui/core/Button'
 import Checkbox from '@mui/material/Checkbox'
 import { styled } from '@mui/material/styles'
@@ -254,12 +253,10 @@ const useStyles = makeStyles((theme) => ({
 }))
 
 export default function FlightCard2(props) {
-  const history = useHistory()
 
   useEffect(() => {
     if (window.localStorage.getItem('token') === 'undefined') {
-      history.push('/')
-    }
+      window.location = '/'    }
   }, [])
   const classes = useStyles()
   const [cityFrom, setCityFrom] = React.useState(props.cityFrom || '')

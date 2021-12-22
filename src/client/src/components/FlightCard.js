@@ -13,7 +13,6 @@ import EditIcon from '@material-ui/icons/Edit'
 import { Alert } from '@material-ui/lab'
 import { Snackbar } from '@material-ui/core'
 import Modal from '@material-ui/core/Modal'
-import { useHistory } from 'react-router'
 import Button from '@material-ui/core/Button'
 
 let count = [
@@ -71,11 +70,10 @@ const useStyles = makeStyles((theme) => ({
 }))
 
 export default function FlightCard(props) {
-  const history = useHistory()
 
   useEffect(() => {
     if (window.localStorage.getItem('token') === 'undefined') {
-      history.push('/')
+      window.location = '/'
     }
   }, [])
   const classes = useStyles()
@@ -284,7 +282,7 @@ export default function FlightCard(props) {
                             disabled={!props.new && !edit}
                             className={classes.fDate}
                             id='standard-password-input'
-                            label='Flight Date'
+                            label=''
                             value={fDate}
                             onChange={handleChangeFDate}
                             type="date"

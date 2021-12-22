@@ -8,10 +8,12 @@ import Home from './components/Home'
 import Seats from './components/Seats'
 import Confirmation from './components/Confirmation'
 import Profile from './components/Profile'
+import NavBar from './components/NavBar'
 class App extends Component {
   render() {
     return (
       <Router>
+        <NavBar />
         <div>
           <Route exact path='/' component={Home} />
           <Route exact path='/admin' component={AddFlight} />

@@ -24,11 +24,11 @@ export default function ResHistory(props) {
   return (
     <div className={classes.font}>
       <div className={classes.order} style={{ fontFamily: 'hel' }}>
-        <h4>Order Number: {props.displayedOrders.orderNumber}</h4>
-        <h4>Product: {props.displayedOrders.product}</h4>
-        <h4>Size: {props.displayedOrders.size}</h4>
+        <h4>Order Number: </h4>
+        <h4>Product:</h4>
+        <h4>Size: </h4>
         <h4 className={classes.quant}>
-          Quantity: {props.displayedOrders.quantity}
+          Quantity: 
         </h4>
       </div>
     </div>

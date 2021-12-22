@@ -14,7 +14,6 @@ import Container from '@material-ui/core/Container'
 import { useState } from 'react'
 import axios from 'axios'
 import Snackbar from '@material-ui/core/Snackbar'
-import { useHistory } from 'react-router-dom'
 import NavBar from '../components/NavBar'
 
 function Copyright() {
@@ -105,23 +104,24 @@ export default function Login() {
   const emailChange = (e) => {
     setEmail(e.target.value)
   }
-  const history = useHistory()
   const passwordChange = (e) => {
     setPassword(e.target.value)
   }
   const handleSignin = async (e) => {
     e.preventDefault()
     await axios
-      .post('http://localhost:3000/login', {
-        email: email,
-        password: password,
-      },
-      {
-        headers: {
-          token: headers,
+      .post(
+        'http://localhost:3000/login',
+        {
+          email: email,
+          password: password,
         },
-      }
-    )
+        {
+          headers: {
+            token: headers,
+          },
+        }
+      )
       .then((res) => {
         console.log(res)
         if (res.data.message) {
@@ -136,9 +136,14 @@ export default function Login() {
         }
 
         window.localStorage.setItem('token', res.headers.token)
-        window.localStorage.setItem('name', res.headers.name)
+        window.localStorage.setItem('isAdmin', res.data.user.isAdmin)
+        console.log(res.data.user.isAdmin)
 
-        history.push('/flight')
+        if (res.data.user.isAdmin === true) {
+          window.location = '/admin'
+        } else {
+          window.location = '/'
+        }
       })
       .catch((err) => {
         console.log(err)
@@ -147,7 +152,6 @@ export default function Login() {
 
   return (
     <div>
-      <NavBar />
       <div className={classes.root}>
         <Container component='main' maxWidth='xs' color='white'>
           <CssBaseline />

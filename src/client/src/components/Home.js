@@ -220,9 +220,6 @@ export default function Home() {
 
   return (
     <div>
-      <div style={{ marginTop: '-1vw', marginLeft: '-2vw', width: '101vw' }}>
-        <NavBar />
-      </div>
       <div className={classes.disp}>
         <div>
           <br />

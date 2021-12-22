@@ -244,9 +244,6 @@ export default function Seats() {
   }
   return (
     <div>
-      <div style={{ marginTop: '-1vw', marginLeft: '-2vw', width: '101vw' }}>
-        <NavBar />
-      </div>
       <br />
       <br />
       <div
