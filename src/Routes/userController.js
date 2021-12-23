@@ -254,7 +254,7 @@ exports.cancelFlightUser = (req, res) => {
             console.log('Email sent: ' + info.response)
           }
         })
-        return res.json(result)
+        return res.json(result.reservations)
       })
     })
     .catch((err) => {

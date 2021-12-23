@@ -64,6 +64,13 @@ export default function Profile() {
   const [passportNum, setPassportNum] = useState('')
   const [username, setUsername] = useState('')
   const [bookings, setBookings] = useState([])
+  const [chosenPos, setChosenPos] = useState(0)
+  const [departureFlightNum, setDepartureFlightNum] = useState(0)
+  const [departureFlightSeats, setDepartureFlightSeats] = useState('')
+  const [returnFlightNum, setReturnFlightNum] = useState(0)
+  const [returnFlightSeats, setReturnFlightSeats] = useState('')
+  const [cabin, setCabin] = useState('')
+
 
   const [open2, setOpen2] = React.useState(false)
   const handleOpen2 = () => setOpen2(true)
@@ -79,14 +86,14 @@ export default function Profile() {
     setUsername(event.target.value)
   }
   useEffect(() => {
-    if (window.localStorage.getItem('token') == 'undefined') {
+    if (window.localStorage.getItem('token') === 'undefined') {
       console.log('its null')
       window.location = '/'
     }
   }, [])
 
-  useEffect(async () => {
-    await axios
+  useEffect(() => {
+     axios
       .post(
         'http://localhost:3000/getUser',
         {},
@@ -97,7 +104,7 @@ export default function Profile() {
         }
       )
       .then((res) => {
-        console.log(res.data)
+        // console.log(res.data)
         setFullName(res.data.Name)
         setPassportNum(res.data.passportNo)
         setUsername(res.data.username)
@@ -113,6 +120,30 @@ export default function Profile() {
       .post(
         'http://localhost:3000/cancelFlightUser',
         { index: pos },
+        {
+          headers: {
+            token: headers,
+          },
+        }
+      )
+      .then((res) => {
+
+        console.log(res.data)
+        setBookings(res.data)
+      })
+      .catch((error) => {
+        console.log(error)
+      })
+  }
+  function handleEditUser(){
+    axios
+      .post(
+        'http://localhost:3000/updateUser',
+        {
+          Name: fullName,
+          passportNo: passportNum,
+          username: username
+        },
         {
           headers: {
             token: headers,
@@ -177,7 +208,15 @@ export default function Profile() {
                   <h4>Price: {d.Price}</h4>
                   <h4>Cabin: {d.Cabin}</h4>
 
-                  <Button onClick={handleOpen} variant='contained'>
+                  <Button onClick={(d, pos) => {
+                      handleOpen()
+                      setCabin(d.Cabin)
+                      setDepartureFlightNum(d.DepartureFlightNum)
+                      setReturnFlightNum(d.ReturnFlightNum)
+                      setDepartureFlightSeats(d.DepartureFlightSeats)
+                      setReturnFlightSeats(d.ReturnFlightSeats)
+                      setChosenPos(pos)
+                    }} variant='contained'>
                     {' '}
                     cancel booking
                   </Button>
@@ -212,17 +251,17 @@ export default function Profile() {
                   </Typography>
                   <br />
                   <Button
-                    onClick={
-                      (handleClose,
-                      handleCancel1(pos),
+                    onClick={ () => {
+                      handleClose()
+                      handleCancel1(chosenPos)
                       handleCancel2(
-                        d.DepartureFlightNum,
-                        d.DepartureFlightSeats,
-                        d.ReturnFlightNum,
-                        d.ReturnFlightSeats,
-                        d.Cabin
-                      ))
-                    }
+                        departureFlightNum,
+                        departureFlightSeats,
+                        returnFlightNum,
+                        returnFlightSeats,
+                        cabin
+                      )
+                    }}
                     style={{ marginLeft: '6vw' }}
                     variant='contained'
                   >
@@ -287,7 +326,7 @@ export default function Profile() {
                 <Button
                   variant='contained'
                   style={{ marginLeft: '5vw', marginTop: '5vw' }}
-                  // onClick={handleEditUser}
+                  onClick={handleEditUser}
                 >
                   {' '}
                   save

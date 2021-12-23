@@ -20,12 +20,14 @@ const seatsRet = window.localStorage.getItem('reservedSeatsRet')
 const fNumDep = parseInt(window.localStorage.getItem('depFlightNum'), 10)
 const fNumRet = parseInt(window.localStorage.getItem('retFlightNum'), 10)
 const cabin = window.localStorage.getItem('cabin')
-const retD = window.localStorage.getItem('retDate').toString()
-const depD = window.localStorage.getItem('depDate').toString()
+const retD = window.localStorage.getItem('retDate')
+const depD = window.localStorage.getItem('depDate')
 const depAir = window.localStorage.getItem('from')
 const retAir = window.localStorage.getItem('to')
+const numOfPassengers = window.localStorage.getItem('numOfPassengers')
 const priceDep = parseInt(window.localStorage.getItem('priceDep'), 10)
 const priceRet = parseInt(window.localStorage.getItem('priceRet'), 10)
+const totalPrice = numOfPassengers * (priceDep + priceRet)
 
 function Copyright() {
   return (
@@ -103,7 +105,7 @@ export default function Confirmation() {
   const [password, setPassword] = useState('')
   const [errorMessage, setError] = useState('')
   const [open, setOpen] = React.useState(false)
-  const headers = window.localStorage.getItem('token')
+  var headers = window.localStorage.getItem('token')
   const [loginVisible, setLoginVisible] = useState('hidden')
 
   useEffect(() => {}, [])
@@ -115,7 +117,7 @@ export default function Confirmation() {
     } else {
       handleBooking1()
       handleBooking2()
-      // window.location = '/my-profile'
+      window.location = '/my-profile'
     }
   }
   async function handleBooking2() {
@@ -150,7 +152,7 @@ export default function Confirmation() {
       })
   }
   async function handleBooking1() {
-    const totalPrice = priceDep + priceRet
+
     await axios
       .post(
         'http://localhost:3000/bookFlightUser',
@@ -215,6 +217,10 @@ export default function Confirmation() {
         if (res.data.message) {
           setError(res.data.message)
           setOpen(true)
+          headers = window.localStorage.setItem('token', res.headers.token)
+          handleBooking1()
+          handleBooking2()
+          window.location = '/my-profile'
           return
         }
         if (res.data.error) {
@@ -223,11 +229,7 @@ export default function Confirmation() {
           return
         }
 
-        window.localStorage.setItem('token', res.headers.token)
-        window.localStorage.setItem('name', res.headers.name)
-        handleBooking1()
-        handleBooking2()
-        window.location = '/my-profile'
+
       })
       .catch((err) => {
         console.log(err)
@@ -269,7 +271,7 @@ export default function Confirmation() {
           <br />
           <br />
           <h2>Cabin: {cabin} </h2>
-          <h2>Total Price: EGP {priceDep + priceRet}</h2>
+          <h2>Total Price: EGP {totalPrice}</h2>
         </div>
         <br />
         <br />
