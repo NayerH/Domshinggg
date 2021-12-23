@@ -226,6 +226,7 @@ exports.bookFlightUser = (req, res) => {
 
 //index
 exports.cancelFlightUser = (req, res) => {
+
   console.log(req.user.user)
   User.findOne({
     username: req.user.user.username,

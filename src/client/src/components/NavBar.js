@@ -146,11 +146,9 @@ export default function NavBar(props) {
         }
       )
       .then((res) => {
-        if (res.data.status === 0) {
           window.localStorage.setItem('token', 'undefined')
           window.location = '/'
-        } else {
-        }
+
       })
   }
   const classes = useStyles()

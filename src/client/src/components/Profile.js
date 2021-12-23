@@ -198,7 +198,7 @@ export default function Profile() {
           </h1>
           <div style={{ marginTop: '4vw', marginLeft: '10vw' }}>
             {bookings.map(
-              (d, pos) => (
+              (d, index) => (
                 <div>
                   <h4>Reservation Number: {d.bookingNo}</h4>
                   <h4>Departure Flight Number:{d.DepartureFlightNum}</h4>
@@ -208,14 +208,15 @@ export default function Profile() {
                   <h4>Price: {d.Price}</h4>
                   <h4>Cabin: {d.Cabin}</h4>
 
-                  <Button onClick={(d, pos) => {
+                  <Button onClick={() => {
+                      console.log(index);
                       handleOpen()
                       setCabin(d.Cabin)
                       setDepartureFlightNum(d.DepartureFlightNum)
                       setReturnFlightNum(d.ReturnFlightNum)
                       setDepartureFlightSeats(d.DepartureFlightSeats)
                       setReturnFlightSeats(d.ReturnFlightSeats)
-                      setChosenPos(pos)
+                      setChosenPos(index)
                     }} variant='contained'>
                     {' '}
                     cancel booking

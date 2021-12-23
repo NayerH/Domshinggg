@@ -217,10 +217,7 @@ export default function Confirmation() {
         if (res.data.message) {
           setError(res.data.message)
           setOpen(true)
-          headers = window.localStorage.setItem('token', res.headers.token)
-          handleBooking1()
-          handleBooking2()
-          window.location = '/my-profile'
+
           return
         }
         if (res.data.error) {
@@ -228,7 +225,11 @@ export default function Confirmation() {
           setOpen(true)
           return
         }
-
+        window.localStorage.setItem('token', res.headers.token)
+        headers = res.headers.token
+        handleBooking1()
+        handleBooking2()
+        window.location = '/my-profile'
 
       })
       .catch((err) => {
