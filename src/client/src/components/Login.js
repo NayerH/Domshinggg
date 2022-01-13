@@ -138,7 +138,7 @@ export default function Login() {
         window.localStorage.setItem('token', res.headers.token)
         window.localStorage.setItem('isAdmin', res.data.isAdmin)
         console.log(res.data.isAdmin)
-        
+
         if (res.data.isAdmin === true) {
           window.location = '/admin'
         } else {
@@ -234,6 +234,18 @@ export default function Login() {
               >
                 Sign In
               </Button>
+              <Grid container>
+                <Grid item xs></Grid>
+                <Grid item>
+                  <Link
+                    href='signup'
+                    variant='body2'
+                    className={classes.fontColor}
+                  >
+                    {"Don't have an account? Sign Up"}
+                  </Link>
+                </Grid>
+              </Grid>
             </form>
           </div>
           <Box mt={8}>

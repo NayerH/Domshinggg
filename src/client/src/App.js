@@ -9,6 +9,11 @@ import Seats from './components/Seats'
 import Confirmation from './components/Confirmation'
 import Profile from './components/Profile'
 import NavBar from './components/NavBar'
+import SignUp from './components/Signup'
+import RetSeats from './components/RetSeats'
+import DepSeats from './components/DepSeats'
+import DepFlights from './components/DepFlights'
+import RetFlights from './components/RetFlights'
 class App extends Component {
   render() {
     return (
@@ -21,6 +26,11 @@ class App extends Component {
           <Route exact path='/chooseSeats' component={Seats} />
           <Route exact path='/confirmation' component={Confirmation} />
           <Route exact path='/my-profile' component={Profile} />
+          <Route exact path='/signup' component={SignUp} />
+          <Route exact path='/retSeats' component={RetSeats} />
+          <Route exact path='/depSeats' component={DepSeats} />
+          <Route exact path='/depFlights' component={DepFlights} />
+          <Route exact path='/retFlights' component={RetFlights} />
         </div>
       </Router>
     )
