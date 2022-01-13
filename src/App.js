@@ -89,6 +89,8 @@ app.use(function (req, res, next) {
 app.post('/add-user', userController.addUser)
 app.get('/view-users', userController.viewUsers)
 app.post('/getUser', authenticateToken, userController.getUser)
+app.post('/signup', userController.signup)
+app.post('/updatePassword', authenticateToken, userController.updatePassword)
 app.post('/updateUser', authenticateToken, userController.updateUser)
 app.post('/bookFlightUser', authenticateToken, userController.bookFlightUser)
 app.post(

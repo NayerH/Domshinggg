@@ -26,7 +26,16 @@ const userSchema = new Schema({
   },
   passportNo: {
     type: String
-  }
+  },
+  phoneNo: {
+    type: String
+  },
+  address: {
+    type: String
+  },
+  code: {
+    type: String
+  },
 }, { timestamps: true });
 userSchema.set('toJSON', { virtuals: true });
 userSchema.set('toObject', { virtuals: true });

@@ -81,6 +81,27 @@ exports.updateUser = (req, res) => {
     })
 }
 
+//oldPassword newPassword
+exports.updatePassword = (req, res) => {
+  let oldPassword = req.body.oldPassword;
+  let newPassword = req.body.newPassword;
+  var result = bcrypt.compareSync(oldPassword, req.user.user.password);
+  if(result){
+    User.updateOne(
+      {username: req.user.user.username},
+      {password: bcrypt.hashSync(newPassword, 10)}
+    ).then((result) => {
+        res.status(200).send('Password updated');
+        console.log('The User is Updated successfully !');
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  } else {
+    return res.json({ message: 'wrong password' });
+  }
+};
+
 //Deleting an existing user
 exports.deleteUser = (req, res) => {
   User.findByIdAndRemove(req.params.id)
@@ -110,9 +131,7 @@ exports.login = async (req, res) => {
 
         if (result) {
           const isAdmin = user.isAdmin
-          const token = jwt.sign({ user }, process.env.TOKEN_SECRET, {
-            expiresIn: '5h',
-          })
+          const token = jwt.sign({ user }, process.env.TOKEN_SECRET)
 
           res.setHeader('token', token)
           res.setHeader('isAdmin', isAdmin)
@@ -141,30 +160,30 @@ exports.login = async (req, res) => {
 
 exports.logout = async (req, res) => {
   try {
-    const token = req.headers.token
+    const token = req.headers.token;
     //console.log(token);
-    jwt.verify(token, process.env.TOKEN_SECRET)
+    jwt.verify(token, process.env.TOKEN_SECRET);
     return res.json({
       status: 0,
       message: 'Success',
-    })
+    });
   } catch (err) {
-    console.log(err)
+    console.log(err);
     return res.json({
       status: 1,
       message: 'Error',
-    })
+    });
   }
-}
+};
 
 exports.signup = async (req, res) => {
-  // const { email, password} = req.body;
-  let user = false
-  console.log('METHOD ACTIVE')
+  const { email, password, firstName, lastName, phoneNo, address, code, passNum} = req.body;
+  let user = false;
+  // console.log('METHOD ACTIVE')
   try {
-    // let user = await User.findOne({
-    //   email,
-    // });
+    let user = await User.findOne({
+      email,
+    });
     if (user) {
       return res.json({
         statusCode: 0,
@@ -172,12 +191,16 @@ exports.signup = async (req, res) => {
       })
     } else {
       var newUser = new User({
-        username: 'admin@flightreservation.com',
-        Name: 'Admin',
-        password: 'adminpassword',
-        isAdmin: true,
+        username: email,
+        Name: firstName + " " + lastName,
+        password: password,
+        isAdmin: false,
+        phoneNo: phoneNo,
+        address: address,
+        code: code,
+        passportNo: passNum
       })
-      newUser.password = bcrypt.hashSync('adminpassword', 10)
+      newUser.password = bcrypt.hashSync(password, 10)
       newUser.save(function (err, user) {
         if (err) {
           return (res.status = (400).send({
