@@ -32,6 +32,7 @@
     "nodemailer": "^6.7.2",
     "passport": "^0.5.0",
     "passport-local-mongoose": "^6.1.0",
-    "passport-one-session-per-user": "^1.0.3"
+    "passport-one-session-per-user": "^1.0.3",
+    "stripe": "^8.197.0"
   }
 }

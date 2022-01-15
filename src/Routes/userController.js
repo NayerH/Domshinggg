@@ -3,6 +3,8 @@ const User = require('../models/User')
 const jwt = require('jsonwebtoken')
 const bcrypt = require('bcrypt')
 const nodemailer = require('nodemailer')
+const Stripe = require('stripe');
+const stripe = Stripe('sk_test_4eC39HqLyjWDarjtT1zdp7dc');
 
 var transporter = nodemailer.createTransport({
   service: 'gmail',
@@ -239,8 +241,76 @@ exports.bookFlightUser = (req, res) => {
       user.reservations.push(reservation)
       user.save().then((result) => {
         console.log(result)
+        var mailOptions = {
+          from: 'nayersanad@gmail.com',
+          to: req.user.user.username,
+          subject: 'Booking Confirmation',
+          text:
+            'This email is to confirm the booking under the reservation number ' +
+            reservation.bookingNo +
+            ' and this is the booking itenary:\nDeparture Flight Number: ' +
+            reservation.DepartureFlightNum + '\nDeparture Flight Seats: ' +
+            reservation.DepartureFlightSeats + '\nReturn Flight Number: ' +
+            reservation.ReturnFlightNum + '\nReturn Flight Seats: ' +
+            reservation.ReturnFlightSeats + '\nCabin: ' +
+            reservation.Cabin + '\nPrice: ' +
+            reservation.Price
+        }
+
+        transporter.sendMail(mailOptions, function (error, info) {
+          if (error) {
+            console.log(error)
+          } else {
+            console.log('Email sent: ' + info.response)
+          }
+        })
         return res.json(result)
       })
+    })
+    .catch((err) => {
+      console.log(err)
+    })
+}
+
+//reservationNumber
+exports.emailItinerary = (req, res) => {
+  // console.log(req.user)
+  User.findOne({ username: req.user.user.username })
+    .then((user) => {
+        let reservation = null;
+        for(let i = 0; i < user.reservations.length; i++){
+          if(user.reservations[i].bookingNo === Integer.parseInt(req.body.reservationNumber, 10)){
+            reservation = user.reservations[i];
+            break;
+          }
+        }
+        if(reservation === null){
+          return res.json("Cannot find reservation")
+        }
+        var mailOptions = {
+          from: 'nayersanad@gmail.com',
+          to: req.user.user.username,
+          subject: 'Booking Itinerary',
+          text:
+            'This is the itinerary for the booking under the reservation number ' +
+            reservation.bookingNo +
+            ' and this is all the information:\nDeparture Flight Number: ' +
+            reservation.DepartureFlightNum + '\nDeparture Flight Seats: ' +
+            reservation.DepartureFlightSeats + '\nReturn Flight Number: ' +
+            reservation.ReturnFlightNum + '\nReturn Flight Seats: ' +
+            reservation.ReturnFlightSeats + '\nCabin: ' +
+            reservation.Cabin + '\nPrice: ' +
+            reservation.Price
+        }
+
+        transporter.sendMail(mailOptions, function (error, info) {
+          if (error) {
+            console.log(error)
+          } else {
+            console.log('Email sent: ' + info.response)
+          }
+        })
+        return res.json("SUCCESS")
     })
     .catch((err) => {
       console.log(err)
@@ -261,7 +331,7 @@ exports.cancelFlightUser = (req, res) => {
         console.log(result)
         var mailOptions = {
           from: 'nayersanad@gmail.com',
-          to: 'nayerhany@gmail.com',
+          to: req.user.user.username,
           subject: 'Booking Cancellation Confirmation',
           text:
             'This email is to confirm the cancellation of Reservation Number ' +
@@ -284,4 +354,55 @@ exports.cancelFlightUser = (req, res) => {
     .catch((err) => {
       console.log(err)
     })
+}
+
+
+//amount stripeToken
+exports.payForBooking = (req, res) => {
+  stripe.charges.create({
+    amount: Integer.parseInt(req.body.amount,10) * 100,
+    currency: "usd",
+    source: request.body.stripeToken,
+    description: "Payment for a booking with the amount of " + req.body.amount
+  }, function(err, charge) {
+    if(err){
+      switch (err.type) {
+        case 'StripeCardError':
+          // A declined card error
+          err.message = "Your cardwas declined, please contact your bank."
+          console.log("card was declined");
+          break;
+        case 'StripeRateLimitError':
+          err.message = "Looks like we have a problem on our end, please try again later."
+          console.log("stripe rate limit exceeded");
+          break;
+        case 'StripeInvalidRequestError':
+          // Invalid parameters were supplied to Stripe's API
+          err.message = "Please fill in all the card details correctly"
+          console.log("stripe invalid parameters");
+          break;
+        case 'StripeAPIError':
+          // An error occurred internally with Stripe's API
+          err.message = "Looks like we have a problem on our end, please try again later."
+          console.log("stripe api error");
+          break;
+        case 'StripeConnectionError':
+          // Some kind of error occurred during the HTTPS communication
+          err.message = "Looks like we have a problem on our end, please try again later."
+          console.log("stripe https error");
+          break;
+        case 'StripeAuthenticationError':
+          // You probably used an incorrect API key
+          err.message = "Looks like we have a problem on our end, please try again later."
+          console.log("incorrect stripe api key");
+          break;
+        default:
+          // Handle any other types of unexpected errors
+          err.message = "unexpected error";
+          break;
+      }
+      return res.status(400).send(err)
+    }
+    return res.status(200).send("SUCCESS");
+  });
 }
