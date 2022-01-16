@@ -356,6 +356,19 @@ exports.cancelFlightUser = (req, res) => {
     })
 }
 
+//reservationIndex departure seats -- seats in a string not an array
+exports.editSeatsUser = (req, res) => {
+  User.findOne({
+    username: req.user.user.username,
+  }).then((user) => {
+    if(req.body.departure){
+      user.reservations[reservationIndex].DepartureFlightSeats = req.body.seats
+    } else {
+      user.reservations[reservationIndex].ReturnFlightSeats = req.body.seats
+    }
+  })
+}
+
 
 //amount stripeToken
 exports.payForBooking = (req, res) => {

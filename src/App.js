@@ -92,14 +92,13 @@ app.post('/getUser', authenticateToken, userController.getUser)
 app.post('/signup', userController.signup)
 app.post('/updatePassword', authenticateToken, userController.updatePassword)
 app.post('/updateUser', authenticateToken, userController.updateUser)
-app.post('/bookFlightUser', authenticateToken, userController.bookFlightUser)
+app.post('/bookFlightUser', authenticateToken, userController.bookFlightUser);
+app.post('/cancelFlightUser',authenticateToken,userController.cancelFlightUser);
+
 app.post('/emailItinerary', authenticateToken, userController.emailItinerary)
-app.post('/payForBooking', authenticateToken, userController.payForBooking)
-app.post(
-  '/cancelFlightUser',
-  authenticateToken,
-  userController.cancelFlightUser
-)
+app.post('/payForBooking', authenticateToken, userController.payForBooking);
+app.post('/editSeatsUser', authenticateToken, userController.editSeatsUser);
+
 // app.delete('/delete-user/:id',userController.deleteUser);
 
 //app.get('/add-all-flights',authenticateToken, flightController.addFlight);
@@ -113,6 +112,10 @@ app.post('/findFlight', flightController.findSpecificFlight)
 app.post('/bookFlight', authenticateToken, flightController.bookFlight)
 app.post('/cancelFlight', authenticateToken, flightController.cancelFlight)
 app.post('/getSeats', flightController.getSeats)
+
+app.post('/getSeatsEdit', authenticateToken, flightController.getSeatsEdit)
+app.post('/editSeatsFlight', authenticateToken, flightController.editSeatsFlight)
+app.post('/getFlightsUserEdit', authenticateToken, flightController.getFlightsUserEdit)
 // app.get('/testUpdate', flightController.testUpdate);
 // app.get('/signup', userController.signup);
 
