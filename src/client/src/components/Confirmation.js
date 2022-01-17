@@ -14,6 +14,14 @@ import Container from '@material-ui/core/Container'
 import { useState } from 'react'
 import axios from 'axios'
 import Snackbar from '@material-ui/core/Snackbar'
+import Modal from '@mui/material/Modal'
+import { Elements } from '@stripe/react-stripe-js'
+import { loadStripe } from '@stripe/stripe-js'
+
+import CheckoutForm from './CheckoutForm'
+const stripePromise = loadStripe(
+  'pk_test_51KIj0pFpizc2ReMjwxii0jQQD2ECUJO0FHermtilNTU93Ef7dIjY4CnZ0CZlf4nNEW7kRjILeXf49NVrjQuNKyy300dTk16KIx'
+)
 
 const seatsDep = window.localStorage.getItem('reservedSeatsDep')
 const seatsRet = window.localStorage.getItem('reservedSeatsRet')
@@ -28,6 +36,18 @@ const numOfPassengers = window.localStorage.getItem('numOfPassengers')
 const priceDep = parseInt(window.localStorage.getItem('priceDep'), 10)
 const priceRet = parseInt(window.localStorage.getItem('priceRet'), 10)
 const totalPrice = numOfPassengers * (priceDep + priceRet)
+window.localStorage.setItem('totalPrice', totalPrice)
+const style = {
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  width: 400,
+  bgcolor: 'background.paper',
+  border: '2px solid #000',
+  boxShadow: 24,
+  p: 4,
+}
 
 function Copyright() {
   return (
@@ -107,6 +127,9 @@ export default function Confirmation() {
   const [open, setOpen] = React.useState(false)
   var headers = window.localStorage.getItem('token')
   const [loginVisible, setLoginVisible] = useState('hidden')
+  const [openPayment, setOpenPayment] = React.useState(false)
+  const handleOpenPayment = () => setOpenPayment(true)
+  const handleClosePayment = () => setOpenPayment(false)
 
   useEffect(() => {}, [])
 
@@ -115,9 +138,10 @@ export default function Confirmation() {
     if (window.localStorage.getItem('token') === 'undefined') {
       setLoginVisible('visible')
     } else {
-      handleBooking1()
-      handleBooking2()
-      window.location = '/my-profile'
+      handleOpenPayment()
+      // handleBooking1()
+      // handleBooking2()
+      // window.location = '/my-profile'
     }
   }
   async function handleBooking2() {
@@ -152,7 +176,6 @@ export default function Confirmation() {
       })
   }
   async function handleBooking1() {
-
     await axios
       .post(
         'http://localhost:3000/bookFlightUser',
@@ -230,7 +253,6 @@ export default function Confirmation() {
         handleBooking1()
         handleBooking2()
         window.location = '/my-profile'
-
       })
       .catch((err) => {
         console.log(err)
@@ -385,6 +407,22 @@ export default function Confirmation() {
             </Snackbar>
           </Container>
         </div>
+      </div>
+      {/* Modal Payment */}
+      <div>
+        <Button onClick={handleOpenPayment}>Open modal</Button>
+        <Modal
+          open={openPayment}
+          onClose={handleClosePayment}
+          aria-labelledby='modal-modal-title'
+          aria-describedby='modal-modal-description'
+        >
+          <Box sx={style} style={{ width: '50vw' }}>
+            <Elements stripe={stripePromise}>
+              <CheckoutForm />
+            </Elements>
+          </Box>
+        </Modal>
       </div>
     </div>
   )

@@ -96,7 +96,7 @@ app.post('/bookFlightUser', authenticateToken, userController.bookFlightUser);
 app.post('/cancelFlightUser',authenticateToken,userController.cancelFlightUser);
 
 app.post('/emailItinerary', authenticateToken, userController.emailItinerary)
-app.post('/payForBooking', authenticateToken, userController.payForBooking);
+app.post('/payForBooking', userController.payForBooking);
 app.post('/editSeatsUser', authenticateToken, userController.editSeatsUser);
 
 // app.delete('/delete-user/:id',userController.deleteUser);

@@ -3,8 +3,10 @@ const User = require('../models/User')
 const jwt = require('jsonwebtoken')
 const bcrypt = require('bcrypt')
 const nodemailer = require('nodemailer')
-const Stripe = require('stripe');
-const stripe = Stripe('sk_test_4eC39HqLyjWDarjtT1zdp7dc');
+const Stripe = require('stripe')
+const stripe = Stripe(
+  'sk_test_51KIj0pFpizc2ReMjsUZSvsNC3Jms4T8FtNCinhwK2s9rOm9okpAYTvyJ8GH7Lua36TyRxZMaxwK72qI3Ap0ClIoa00iFZ5oNR7'
+)
 
 var transporter = nodemailer.createTransport({
   service: 'gmail',
@@ -85,24 +87,25 @@ exports.updateUser = (req, res) => {
 
 //oldPassword newPassword
 exports.updatePassword = (req, res) => {
-  let oldPassword = req.body.oldPassword;
-  let newPassword = req.body.newPassword;
-  var result = bcrypt.compareSync(oldPassword, req.user.user.password);
-  if(result){
+  let oldPassword = req.body.oldPassword
+  let newPassword = req.body.newPassword
+  var result = bcrypt.compareSync(oldPassword, req.user.user.password)
+  if (result) {
     User.updateOne(
-      {username: req.user.user.username},
-      {password: bcrypt.hashSync(newPassword, 10)}
-    ).then((result) => {
-        res.status(200).send('Password updated');
-        console.log('The User is Updated successfully !');
+      { username: req.user.user.username },
+      { password: bcrypt.hashSync(newPassword, 10) }
+    )
+      .then((result) => {
+        res.status(200).send('Password updated')
+        console.log('The User is Updated successfully !')
       })
       .catch((err) => {
-        console.log(err);
-      });
+        console.log(err)
+      })
   } else {
-    return res.json({ message: 'wrong password' });
+    return res.json({ message: 'wrong password' })
   }
-};
+}
 
 //Deleting an existing user
 exports.deleteUser = (req, res) => {
@@ -162,30 +165,39 @@ exports.login = async (req, res) => {
 
 exports.logout = async (req, res) => {
   try {
-    const token = req.headers.token;
+    const token = req.headers.token
     //console.log(token);
-    jwt.verify(token, process.env.TOKEN_SECRET);
+    jwt.verify(token, process.env.TOKEN_SECRET)
     return res.json({
       status: 0,
       message: 'Success',
-    });
+    })
   } catch (err) {
-    console.log(err);
+    console.log(err)
     return res.json({
       status: 1,
       message: 'Error',
-    });
+    })
   }
-};
+}
 
 exports.signup = async (req, res) => {
-  const { email, password, firstName, lastName, phoneNo, address, code, passNum} = req.body;
-  let user = false;
+  const {
+    email,
+    password,
+    firstName,
+    lastName,
+    phoneNo,
+    address,
+    code,
+    passNum,
+  } = req.body
+  let user = false
   // console.log('METHOD ACTIVE')
   try {
     let user = await User.findOne({
       email,
-    });
+    })
     if (user) {
       return res.json({
         statusCode: 0,
@@ -194,13 +206,13 @@ exports.signup = async (req, res) => {
     } else {
       var newUser = new User({
         username: email,
-        Name: firstName + " " + lastName,
+        Name: firstName + ' ' + lastName,
         password: password,
         isAdmin: false,
         phoneNo: phoneNo,
         address: address,
         code: code,
-        passportNo: passNum
+        passportNo: passNum,
       })
       newUser.password = bcrypt.hashSync(password, 10)
       newUser.save(function (err, user) {
@@ -249,12 +261,17 @@ exports.bookFlightUser = (req, res) => {
             'This email is to confirm the booking under the reservation number ' +
             reservation.bookingNo +
             ' and this is the booking itenary:\nDeparture Flight Number: ' +
-            reservation.DepartureFlightNum + '\nDeparture Flight Seats: ' +
-            reservation.DepartureFlightSeats + '\nReturn Flight Number: ' +
-            reservation.ReturnFlightNum + '\nReturn Flight Seats: ' +
-            reservation.ReturnFlightSeats + '\nCabin: ' +
-            reservation.Cabin + '\nPrice: ' +
-            reservation.Price
+            reservation.DepartureFlightNum +
+            '\nDeparture Flight Seats: ' +
+            reservation.DepartureFlightSeats +
+            '\nReturn Flight Number: ' +
+            reservation.ReturnFlightNum +
+            '\nReturn Flight Seats: ' +
+            reservation.ReturnFlightSeats +
+            '\nCabin: ' +
+            reservation.Cabin +
+            '\nPrice: ' +
+            reservation.Price,
         }
 
         transporter.sendMail(mailOptions, function (error, info) {
@@ -277,40 +294,48 @@ exports.emailItinerary = (req, res) => {
   // console.log(req.user)
   User.findOne({ username: req.user.user.username })
     .then((user) => {
-        let reservation = null;
-        for(let i = 0; i < user.reservations.length; i++){
-          if(user.reservations[i].bookingNo === Integer.parseInt(req.body.reservationNumber, 10)){
-            reservation = user.reservations[i];
-            break;
-          }
+      let reservation = null
+      for (let i = 0; i < user.reservations.length; i++) {
+        if (
+          user.reservations[i].bookingNo ===
+          Integer.parseInt(req.body.reservationNumber, 10)
+        ) {
+          reservation = user.reservations[i]
+          break
         }
-        if(reservation === null){
-          return res.json("Cannot find reservation")
-        }
-        var mailOptions = {
-          from: 'nayersanad@gmail.com',
-          to: req.user.user.username,
-          subject: 'Booking Itinerary',
-          text:
-            'This is the itinerary for the booking under the reservation number ' +
-            reservation.bookingNo +
-            ' and this is all the information:\nDeparture Flight Number: ' +
-            reservation.DepartureFlightNum + '\nDeparture Flight Seats: ' +
-            reservation.DepartureFlightSeats + '\nReturn Flight Number: ' +
-            reservation.ReturnFlightNum + '\nReturn Flight Seats: ' +
-            reservation.ReturnFlightSeats + '\nCabin: ' +
-            reservation.Cabin + '\nPrice: ' +
-            reservation.Price
-        }
+      }
+      if (reservation === null) {
+        return res.json('Cannot find reservation')
+      }
+      var mailOptions = {
+        from: 'nayersanad@gmail.com',
+        to: req.user.user.username,
+        subject: 'Booking Itinerary',
+        text:
+          'This is the itinerary for the booking under the reservation number ' +
+          reservation.bookingNo +
+          ' and this is all the information:\nDeparture Flight Number: ' +
+          reservation.DepartureFlightNum +
+          '\nDeparture Flight Seats: ' +
+          reservation.DepartureFlightSeats +
+          '\nReturn Flight Number: ' +
+          reservation.ReturnFlightNum +
+          '\nReturn Flight Seats: ' +
+          reservation.ReturnFlightSeats +
+          '\nCabin: ' +
+          reservation.Cabin +
+          '\nPrice: ' +
+          reservation.Price,
+      }
 
-        transporter.sendMail(mailOptions, function (error, info) {
-          if (error) {
-            console.log(error)
-          } else {
-            console.log('Email sent: ' + info.response)
-          }
-        })
-        return res.json("SUCCESS")
+      transporter.sendMail(mailOptions, function (error, info) {
+        if (error) {
+          console.log(error)
+        } else {
+          console.log('Email sent: ' + info.response)
+        }
+      })
+      return res.json('SUCCESS')
     })
     .catch((err) => {
       console.log(err)
@@ -319,7 +344,6 @@ exports.emailItinerary = (req, res) => {
 
 //index
 exports.cancelFlightUser = (req, res) => {
-
   console.log(req.user.user)
   User.findOne({
     username: req.user.user.username,
@@ -361,7 +385,7 @@ exports.editSeatsUser = (req, res) => {
   User.findOne({
     username: req.user.user.username,
   }).then((user) => {
-    if(req.body.departure){
+    if (req.body.departure) {
       user.reservations[reservationIndex].DepartureFlightSeats = req.body.seats
     } else {
       user.reservations[reservationIndex].ReturnFlightSeats = req.body.seats
@@ -369,53 +393,64 @@ exports.editSeatsUser = (req, res) => {
   })
 }
 
-
-//amount stripeToken
+//amount token
 exports.payForBooking = (req, res) => {
-  stripe.charges.create({
-    amount: Integer.parseInt(req.body.amount,10) * 100,
-    currency: "usd",
-    source: request.body.stripeToken,
-    description: "Payment for a booking with the amount of " + req.body.amount
-  }, function(err, charge) {
-    if(err){
-      switch (err.type) {
-        case 'StripeCardError':
-          // A declined card error
-          err.message = "Your cardwas declined, please contact your bank."
-          console.log("card was declined");
-          break;
-        case 'StripeRateLimitError':
-          err.message = "Looks like we have a problem on our end, please try again later."
-          console.log("stripe rate limit exceeded");
-          break;
-        case 'StripeInvalidRequestError':
-          // Invalid parameters were supplied to Stripe's API
-          err.message = "Please fill in all the card details correctly"
-          console.log("stripe invalid parameters");
-          break;
-        case 'StripeAPIError':
-          // An error occurred internally with Stripe's API
-          err.message = "Looks like we have a problem on our end, please try again later."
-          console.log("stripe api error");
-          break;
-        case 'StripeConnectionError':
-          // Some kind of error occurred during the HTTPS communication
-          err.message = "Looks like we have a problem on our end, please try again later."
-          console.log("stripe https error");
-          break;
-        case 'StripeAuthenticationError':
-          // You probably used an incorrect API key
-          err.message = "Looks like we have a problem on our end, please try again later."
-          console.log("incorrect stripe api key");
-          break;
-        default:
-          // Handle any other types of unexpected errors
-          err.message = "unexpected error";
-          break;
+  console.log(req.body)
+  let amountInt = parseInt(req.body.amount, 10)
+  stripe.charges.create(
+    {
+      amount: amountInt * 100,
+      currency: 'usd',
+      source: req.body.token,
+      description:
+        'Payment for a booking with the amount of ' + req.body.amount,
+    },
+    function (err, charge) {
+      if (err) {
+        console.log(err)
+        switch (err.type) {
+          case 'StripeCardError':
+            // A declined card error
+            err.message = 'Your cardwas declined, please contact your bank.'
+            console.log('card was declined')
+            break
+          case 'StripeRateLimitError':
+            err.message =
+              'Looks like we have a problem on our end, please try again later.'
+            console.log('stripe rate limit exceeded')
+            break
+          case 'StripeInvalidRequestError':
+            // Invalid parameters were supplied to Stripe's API
+            err.message = 'Please fill in all the card details correctly'
+            console.log('stripe invalid parameters')
+            break
+          case 'StripeAPIError':
+            // An error occurred internally with Stripe's API
+            err.message =
+              'Looks like we have a problem on our end, please try again later.'
+            console.log('stripe api error')
+            break
+          case 'StripeConnectionError':
+            // Some kind of error occurred during the HTTPS communication
+            err.message =
+              'Looks like we have a problem on our end, please try again later.'
+            console.log('stripe https error')
+            break
+          case 'StripeAuthenticationError':
+            // You probably used an incorrect API key
+            err.message =
+              'Looks like we have a problem on our end, please try again later.'
+            console.log('incorrect stripe api key')
+            break
+          default:
+            // Handle any other types of unexpected errors
+            err.message = 'unexpected error'
+            break
+        }
+        return res.status(400).send(err)
       }
-      return res.status(400).send(err)
+      console.log(charge)
+      return res.status(200).send(charge)
     }
-    return res.status(200).send("SUCCESS");
-  });
+  )
 }
