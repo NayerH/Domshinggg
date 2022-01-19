@@ -372,33 +372,85 @@ exports.getSeatsEdit = (req, res) => {
     })
 }
 
-//cabin FlightNum oldSeats newSeats
-exports.editSeatsFlight = (req, res) => {
+//cabinOld cabinNew flightNumOld flightNumNew oldSeats newSeats
+exports.editReservationFlight = (req, res) => {
   // console.log(req.body)
-  Flight.findOne({ FlightNumber: req.body.FlightNum })
+  if(flightNumOld !== flightNumNew){
+  Flight.findOne({ FlightNumber: req.body.flightNumOld })
     .then((flightRes) => {
+      if(flightRes == null){
+        return res.json("FAILED")
+      }
       let oldFlightSeats = req.body.oldSeats.split(',')
-      let newFlightSeats = req.body.newSeats.split(',')
       for (let i = 0; i < oldFlightSeats.length; i++) {
-        if (req.body.cabin === 'Economy') {
+        if (req.body.cabinOld === 'Economy') {
           flightRes.SeatsArrEconomy[oldFlightSeats[i]] = false
+          flightRes.EconomyNumOfSeats += 1;
         } else {
           flightRes.SeatsArrBusiness[oldFlightSeats[i]] = false
+          flightRes.BusinessNumOfSeats += 1;
         }
       }
-      for (let i = 0; i < newFlightSeats.length; i++) {
-        if (req.body.cabin === 'Economy') {
-          flightRes.SeatsArrEconomy[newFlightSeats[i]] = true
-        } else {
-          flightRes.SeatsArrBusiness[newFlightSeats[i]] = true
-        }
-      }
+      Flight.findOne({ FlightNumber: req.body.flightNumNew })
+        .then((flightRes1) => {
+          let newFlightSeats = req.body.newSeats.split(',')
+
+          for (let i = 0; i < newFlightSeats.length; i++) {
+            if (req.body.cabinNew === 'Economy') {
+              flightRes1.SeatsArrEconomy[newFlightSeats[i]] = true
+              flightRes1.EconomyNumOfSeats -= 1;
+            } else {
+              flightRes1.SeatsArrBusiness[newFlightSeats[i]] = true
+              flightRes1.BusinessNumOfSeats -= 1;
+            }
+          }
+        });
+      flightRes.save().then((res) => {
+        flightRes1.save().then((res1) => {
+
+        }).catch((err1) => {
+          console.log(err1)
+        })
+      }).catch((err) => {
+        console.log(err)
+      })
+
       return res.json('SUCCESS')
     })
     .catch((err) => {
       console.log(err)
     })
+  } else {
+    Flight.findOne({ FlightNumber: req.body.flightNumOld })
+      .then((flightRes) => {
+        let oldFlightSeats = req.body.oldSeats.split(',')
+        let newFlightSeats = req.body.newSeats.split(',')
+        for (let i = 0; i < oldFlightSeats.length; i++) {
+          if (req.body.cabinOld === 'Economy') {
+            flightRes.SeatsArrEconomy[oldFlightSeats[i]] = false;
+            flightRes.EconomyNumOfSeats += 1;
+          } else {
+            flightRes.SeatsArrBusiness[oldFlightSeats[i]] = false
+            flightRes.BusinessNumOfSeats += 1;
+          }
+        }
+        for (let i = 0; i < newFlightSeats.length; i++) {
+          if (req.body.cabinNew === 'Economy') {
+            flightRes.SeatsArrEconomy[newFlightSeats[i]] = true
+            flightRes.BusinessNumOfSeats -= 1;
+          } else {
+            flightRes.SeatsArrBusiness[newFlightSeats[i]] = true
+            flightRes.BusinessNumOfSeats -= 1;
+          }
+        }
+        return res.json('SUCCESS')
+      })
+      .catch((err) => {
+        console.log(err)
+      })
+  }
 }
+
 
 //depFlightNum retFlightNum cabin depFlightSeats retFlightSeats
 exports.bookFlight = (req, res) => {

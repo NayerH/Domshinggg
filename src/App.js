@@ -97,7 +97,7 @@ app.post('/cancelFlightUser',authenticateToken,userController.cancelFlightUser);
 
 app.post('/emailItinerary', authenticateToken, userController.emailItinerary)
 app.post('/payForBooking', userController.payForBooking);
-app.post('/editSeatsUser', authenticateToken, userController.editSeatsUser);
+app.post('/editReservationUser', authenticateToken, userController.editReservationUser);
 
 // app.delete('/delete-user/:id',userController.deleteUser);
 
@@ -114,7 +114,7 @@ app.post('/cancelFlight', authenticateToken, flightController.cancelFlight)
 app.post('/getSeats', flightController.getSeats)
 
 app.post('/getSeatsEdit', authenticateToken, flightController.getSeatsEdit)
-app.post('/editSeatsFlight', authenticateToken, flightController.editSeatsFlight)
+app.post('/editReservationFlight', authenticateToken, flightController.editReservationFlight)
 app.post('/getFlightsUserEdit', authenticateToken, flightController.getFlightsUserEdit)
 // app.get('/testUpdate', flightController.testUpdate);
 // app.get('/signup', userController.signup);
