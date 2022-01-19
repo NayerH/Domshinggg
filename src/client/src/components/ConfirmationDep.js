@@ -17,9 +17,9 @@ import Snackbar from '@material-ui/core/Snackbar'
 import Modal from '@mui/material/Modal'
 import { Elements } from '@stripe/react-stripe-js'
 import { loadStripe } from '@stripe/stripe-js'
-
 import CheckoutForm from './CheckoutForm'
 import CheckoutFormEdit from './CheckoutFormEdit'
+
 const stripePromise = loadStripe(
   'pk_test_51KIj0pFpizc2ReMjwxii0jQQD2ECUJO0FHermtilNTU93Ef7dIjY4CnZ0CZlf4nNEW7kRjILeXf49NVrjQuNKyy300dTk16KIx'
 )
@@ -35,9 +35,14 @@ const depAir = window.localStorage.getItem('from')
 // const retAir = window.localStorage.getItem('to')
 const numOfPassengers = window.localStorage.getItem('numOfPassengers')
 const priceDep = parseInt(window.localStorage.getItem('priceDep'), 10)
+const priceDiff = parseInt(window.localStorage.getItem('priceDiff'), 10)
+
 // const priceRet = parseInt(window.localStorage.getItem('priceRet'), 10)
 const totalPrice = numOfPassengers * priceDep
+const totalPriceDiff = numOfPassengers * priceDiff
 window.localStorage.setItem('totalPrice', totalPrice)
+window.localStorage.setItem('totalPriceDiff', totalPriceDiff)
+
 const style = {
   position: 'absolute',
   top: '50%',
@@ -49,7 +54,6 @@ const style = {
   boxShadow: 24,
   p: 4,
 }
-
 function Copyright() {
   return (
     <Typography variant='body2' color='textSecondary' align='center'>
@@ -62,7 +66,6 @@ function Copyright() {
     </Typography>
   )
 }
-
 const useStyles = makeStyles((theme) => ({
   root: {
     height: '100%',
@@ -122,6 +125,7 @@ const useStyles = makeStyles((theme) => ({
 }))
 
 export default function ConfirmationDep() {
+  const classes = useStyles()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [errorMessage, setError] = useState('')
@@ -136,69 +140,38 @@ export default function ConfirmationDep() {
   useEffect(() => {
     console.log('flag:', window.localStorage.getItem('flag'))
   }, [])
-
   const handleClickConfirm = () => {
     console.log(window.localStorage.getItem('token'))
     if (window.localStorage.getItem('token') === 'undefined') {
       setLoginVisible('visible')
     } else {
-      if (parseInt(window.localStorage.getItem('priceDiff'), 10) == 0) {
+      if (
+        parseInt(window.localStorage.getItem('priceDiff'), 10) == 0 &&
+        window.localStorage.getItem('flightNumOld') ==
+          window.localStorage.getItem('flightNumNew')
+      ) {
+        console.log('EDIT SEATS')
+        handleBooking1()
+        handleBooking2()
+        window.location = '/my-profile'
       } else {
         handleOpenPayment()
       }
-      // handleBooking1()
-      // handleBooking2()
-      // window.location = '/my-profile'
     }
   }
+  //cabinOld(cabinOld) cabinNew(cabinNew) flightNumOld(flightNumOld) flightNumNew(flightNumNew) oldSeats(oldSeats) newSeats(newSeats)
   async function handleBooking2() {
     console.log(window.localStorage.getItem('reservedSeatsRet'))
     await axios
       .post(
-        'http://localhost:3000/bookFlight',
+        'http://localhost:3000/editReservationFlight',
         {
-          retFlightNum: parseInt(
-            window.localStorage.getItem('retFlightNum'),
-            10
-          ),
-          retFlightSeats: window.localStorage.getItem('reservedSeatsRet'),
-          depFlightNum: parseInt(
-            window.localStorage.getItem('depFlightNum'),
-            10
-          ),
-          depFlightSeats: window.localStorage.getItem('reservedSeatsDep'),
-          cabin: window.localStorage.getItem('cabin'),
-        },
-        {
-          headers: {
-            token: headers,
-          },
-        }
-      )
-      .then((res) => {
-        console.log(res)
-      })
-      .catch((error) => {
-        console.log(error)
-      })
-  }
-  async function handleBooking1() {
-    await axios
-      .post(
-        'http://localhost:3000/bookFlightUser',
-        {
-          retFlightNum: parseInt(
-            window.localStorage.getItem('retFlightNum'),
-            10
-          ),
-          retFlightSeats: window.localStorage.getItem('reservedSeatsRet'),
-          depFlightNum: parseInt(
-            window.localStorage.getItem('depFlightNum'),
-            10
-          ),
-          depFlightSeats: window.localStorage.getItem('reservedSeatsDep'),
-          cabin: window.localStorage.getItem('cabin'),
-          price: totalPrice,
+          flightNumOld: parseInt(window.localStorage.getItem('fNum'), 10),
+          flightNumNew: parseInt(window.localStorage.getItem('fNum'), 10),
+          oldSeats: window.localStorage.getItem('mySeats'),
+          newSeats: window.localStorage.getItem('newSeats'),
+          cabinOld: window.localStorage.getItem('cabinOld'),
+          cabinNew: window.localStorage.getItem('cabinOld'),
         },
         {
           headers: {
@@ -214,13 +187,39 @@ export default function ConfirmationDep() {
       })
   }
 
+  //reservationIndex(reservationIndex) departure(departure(true/false)) seats(newSeats) flightNumNew(flightNumNew) cabinNew(cabinNew) priceDifference(totalPriceDiff)
+  async function handleBooking1() {
+    console.log('new seats:', window.localStorage.getItem('mySeats'))
+    await axios
+      .post(
+        'http://localhost:3000/editReservationUser',
+        {
+          flightNumNew: 'null',
+          cabinNew: window.localStorage.getItem('cabinEdit'),
+          seats: window.localStorage.getItem('newSeats'),
+          priceDifference: 0,
+          departure: true,
+          reservationIndex: window.localStorage.getItem('reservationIndexEdit'),
+        },
+        {
+          headers: {
+            token: headers,
+          },
+        }
+      )
+      .then((res) => {
+        console.log(res)
+      })
+      .catch((error) => {
+        console.log(error)
+      })
+  }
   const handleClose = (event, reason) => {
     if (reason === 'clickaway') {
       return
     }
     setOpen(false)
   }
-  const classes = useStyles()
   const emailChange = (e) => {
     setEmail(e.target.value)
   }
@@ -265,7 +264,6 @@ export default function ConfirmationDep() {
         console.log(err)
       })
   }
-
   return (
     <div>
       <div>
@@ -289,17 +287,8 @@ export default function ConfirmationDep() {
               <h2>Seat Numbers In Departure Flight: {seatsDep} </h2>
 
               <h2>
-                Price Differnce: EGP {window.localStorage.getItem('priceDiff')}{' '}
+                Price Differnce: EGP {window.localStorage.getItem('priceDiff')}
               </h2>
-            </div>
-            <div style={{ marginLeft: '15vw' }}>
-              <h1>Return Details</h1>
-              <br />
-              <h2>Flight Number: </h2>
-              <h2>Return Airport: </h2>
-              <h2>Return Date: </h2>
-              <h2>Seat Numbers In Return Flight: </h2>
-              <h2>Price: EGP </h2>
             </div>
           </div>
           <br />
@@ -308,14 +297,14 @@ export default function ConfirmationDep() {
           <h2>Cabin: {cabin} </h2>
           <h2 style={{ color: 'green' }}>
             Price Difference To Be Paid: EGP{' '}
-            {window.localStorage.getItem('priceDiff')}{' '}
+            {window.localStorage.getItem('totalPriceDiff')}{' '}
           </h2>
         </div>
         <br />
         <br />
         <br />
         <Button
-          style={{ marginLeft: '80vw', marginTop: '-6vw' }}
+          style={{ marginLeft: '60vw', marginTop: '-6vw' }}
           variant='contained'
           onClick={() => {
             handleClickConfirm()

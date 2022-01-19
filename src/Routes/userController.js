@@ -385,26 +385,37 @@ exports.cancelFlightUser = (req, res) => {
 
 //reservationIndex departure seats flightNumNew cabinNew priceDifference -- seats in a string not an array
 exports.editReservationUser = (req, res) => {
+  console.log(req.body)
+  let reservationIndex = req.body.reservationIndex
   User.findOne({
     username: req.user.user.username,
   }).then((user) => {
     if (req.body.departure) {
       user.reservations[reservationIndex].DepartureFlightSeats = req.body.seats
-      if(req.body.flightNumNew !== "null"){
-        user.reservations[reservationIndex].DepartureFlightNum = req.body.flightNumNew
+      if (req.body.flightNumNew !== 'null') {
+        user.reservations[reservationIndex].DepartureFlightNum =
+          req.body.flightNumNew
       }
-      user.reservations[reservationIndex].Cabin = req.body.cabinNew;
-      user.reservations[reservationIndex].Price -= parseInt(req.body.priceDifference, 10);
+      user.reservations[reservationIndex].Cabin = req.body.cabinNew
+      user.reservations[reservationIndex].Price -= parseInt(
+        req.body.priceDifference,
+        10
+      )
     } else {
       user.reservations[reservationIndex].ReturnFlightSeats = req.body.seats
-      if(req.body.flightNumNew !== "null"){
-        user.reservations[reservationIndex].ReturnFlightNum = req.body.flightNumNew
+      if (req.body.flightNumNew !== 'null') {
+        user.reservations[reservationIndex].ReturnFlightNum =
+          req.body.flightNumNew
       }
-      user.reservations[reservationIndex].Cabin = req.body.cabinNew;
-      user.reservations[reservationIndex].Price -= parseInt(req.body.priceDifference, 10);
+      user.reservations[reservationIndex].Cabin = req.body.cabinNew
+      user.reservations[reservationIndex].Price -= parseInt(
+        req.body.priceDifference,
+        10
+      )
     }
+    user.markModified('reservations')
     user.save().then((result) => {
-      return res.json("SUCCESS")
+      return res.json('SUCCESS')
     })
   })
 }

@@ -113,10 +113,31 @@ export default function Profile() {
   const handleChangeNewPass = (event) => {
     setNewPass(event.target.value)
   }
-  const handleDepSeats = () => {
+
+  const handleDepSeats = (seats, fNum, cabin, index) => {
+    window.localStorage.setItem('mySeats', seats)
+    window.localStorage.setItem('fNum', fNum)
+    window.localStorage.setItem('priceDiff', 0)
+    window.localStorage.setItem('cabinEdit', cabin)
+    window.localStorage.setItem('cabinOld', cabin)
+    window.localStorage.setItem('reservationIndexEdit', index)
+
+    window.localStorage.setItem('flightNumOld', fNum)
+    window.localStorage.setItem('flightNumNew', fNum)
+
     window.location = '/depSeats'
   }
-  const handleRetSeats = () => {
+  const handleRetSeats = (seats, fNum, cabin, index) => {
+    window.localStorage.setItem('mySeats', seats)
+    window.localStorage.setItem('fNum', fNum)
+    window.localStorage.setItem('priceDiff', 0)
+    window.localStorage.setItem('cabinEdit', cabin)
+    window.localStorage.setItem('cabinOld', cabin)
+    window.localStorage.setItem('reservationIndexEdit', index)
+
+    window.localStorage.setItem('flightNumOld', fNum)
+    window.localStorage.setItem('flightNumNew', fNum)
+
     window.location = '/retSeats'
   }
   const handleDepFlights = (
@@ -124,7 +145,9 @@ export default function Profile() {
     depFlightNumEdit,
     depFlightSeatsEdit,
     PriceEdit,
-    CabinEdit
+    CabinEdit,
+    index,
+    departure
   ) => {
     console.log('my seats:', depFlightSeatsEdit)
     var depPassengers = depFlightSeatsEdit.split(',')
@@ -132,13 +155,46 @@ export default function Profile() {
     window.localStorage.setItem('flightNumEdit', depFlightNumEdit)
     window.localStorage.setItem('numOfPassengers', depPassengers.length)
     window.localStorage.setItem('oldSeats', depFlightSeatsEdit)
+    window.localStorage.setItem('mySeats', depFlightSeatsEdit)
+
     window.localStorage.setItem('price', PriceEdit)
     window.localStorage.setItem('cabin', CabinEdit)
-    window.location = '/depFlights'
+    window.localStorage.setItem('cabinOld', CabinEdit)
+    window.localStorage.setItem('flightNumOld', depFlightNumEdit)
+    window.localStorage.setItem('departure', departure)
+    window.localStorage.setItem('reservationIndex', index)
+    if (departure) {
+      window.location = '/depFlights'
+    } else {
+      window.location = '/retFlights'
+    }
   }
-  const handleRetFlights = () => {
+  const handleRetFlights = (
+    bookingNoEdit,
+    retFlightNumEdit,
+    retFlightSeatsEdit,
+    PriceEdit,
+    CabinEdit,
+    index
+  ) => {
+    console.log('my seats:', retFlightSeatsEdit)
+    var retPassengers = retFlightSeatsEdit.split(',')
+    window.localStorage.setItem('bookingNumEdit', bookingNoEdit)
+    window.localStorage.setItem('flightNumEdit', retFlightNumEdit)
+    window.localStorage.setItem('numOfPassengers', retPassengers.length)
+    window.localStorage.setItem('oldSeats', retFlightSeatsEdit)
+    window.localStorage.setItem('mySeats', retFlightSeatsEdit)
+
+    window.localStorage.setItem('price', PriceEdit)
+    window.localStorage.setItem('cabin', CabinEdit)
+    window.localStorage.setItem('cabinOld', CabinEdit)
+    window.localStorage.setItem('flightNumOld', retFlightNumEdit)
+    window.localStorage.setItem('departure', true)
+    window.localStorage.setItem('reservationIndex', index)
+
     window.location = '/retFlights'
   }
+
   const handleChangePassportNum = (event) => {
     setPassportNum(event.target.value)
   }
@@ -314,7 +370,9 @@ export default function Profile() {
                           d.DepartureFlightNum,
                           d.DepartureFlightSeats,
                           d.Price,
-                          d.Cabin
+                          d.Cabin,
+                          index,
+                          true
                         )
                       }}
                       style={{
@@ -325,7 +383,7 @@ export default function Profile() {
                       }}
                       variant='contained'
                     >
-                      edit1
+                      edit
                     </Button>
                   </div>
                   <div style={{ display: 'flex' }}>
@@ -334,7 +392,12 @@ export default function Profile() {
                     </h4>
                     <Button
                       onClick={() => {
-                        handleDepSeats()
+                        handleDepSeats(
+                          d.DepartureFlightSeats,
+                          d.DepartureFlightNum,
+                          d.Cabin,
+                          index
+                        )
                       }}
                       style={{
                         marginLeft: '2vw',
@@ -353,7 +416,15 @@ export default function Profile() {
                     </h4>
                     <Button
                       onClick={() => {
-                        handleRetFlights()
+                        handleDepFlights(
+                          d.bookingNo,
+                          d.ReturnFlightNum,
+                          d.ReturnFlightSeats,
+                          d.Price,
+                          d.Cabin,
+                          index,
+                          false
+                        )
                       }}
                       style={{
                         marginLeft: '2vw',
@@ -372,7 +443,12 @@ export default function Profile() {
                     </h4>
                     <Button
                       onClick={() => {
-                        handleRetSeats()
+                        handleDepSeats(
+                          d.ReturnFlightSeats,
+                          d.ReturnFlightNum,
+                          d.Cabin,
+                          index
+                        )
                       }}
                       style={{
                         marginLeft: '2vw',

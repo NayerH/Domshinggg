@@ -408,14 +408,13 @@ export default function Confirmation() {
       </div>
       {/* Modal Payment */}
       <div>
-        <Button onClick={handleOpenPayment}>Open modal</Button>
         <Modal
           open={openPayment}
           onClose={handleClosePayment}
           aria-labelledby='modal-modal-title'
           aria-describedby='modal-modal-description'
         >
-          <Box sx={style} style={{ width: '50vw' }}>
+          <Box sx={style} style={{ width: '30vw', height: '15vw' }}>
             <Elements stripe={stripePromise}>
               <CheckoutForm />
             </Elements>

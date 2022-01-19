@@ -15,8 +15,9 @@ const Alert = React.forwardRef(function Alert(props, ref) {
 
 const fNumDep = parseInt(window.localStorage.getItem('depFlightNum'), 10)
 const cabin = window.localStorage.getItem('cabin')
-const count = window.localStorage.getItem('numOfPassengersEdit')
-const oldSeatsArr = window.localStorage.getItem('oldSeats').split(',')
+const count = window.localStorage.getItem('mySeats').split(',').length
+window.localStorage.setItem('numOfPassengersEdit', count)
+const oldSeatsArr = window.localStorage.getItem('mySeats').split(',')
 
 var clicksDep = 0
 
@@ -113,6 +114,8 @@ export default function DepSeats() {
         setSeatsDep(true)
         console.log('DONE')
         window.localStorage.setItem('reservedSeatsDep', reservedArrayDep)
+        console.log('new seats:', reservedArrayDep)
+        window.localStorage.setItem('newSeats', reservedArrayDep)
       }
       return
     }
@@ -130,6 +133,8 @@ export default function DepSeats() {
         setSeatsDep(true)
         console.log('DONE')
         window.localStorage.setItem('reservedSeatsDep', reservedArrayDep)
+        window.localStorage.setItem('newSeats', reservedArrayDep)
+        console.log('new seats:', reservedArrayDep)
       }
       return
     }
@@ -142,10 +147,14 @@ export default function DepSeats() {
     }
   }
   useEffect(async () => {
+    console.log('my seats (old):', window.localStorage.getItem('mySeats'))
     await axios
       .post(
-        'http://localhost:3000/findFlight',
-        { flightNum: window.localStorage.getItem('depFlightNum') },
+        'http://localhost:3000/getSeatsEdit',
+        {
+          FlightNum: window.localStorage.getItem('fNum'),
+          cabin: cabin,
+        },
         {
           headers: {
             token: headers,
@@ -153,14 +162,8 @@ export default function DepSeats() {
         }
       )
       .then((res) => {
-        console.log('Flight: ', res.data)
-        if (cabin === 'Economy') {
-          console.log('All Seats:', res.data.SeatsArrEconomy)
-          setDep(res.data.SeatsArrEconomy)
-        } else {
-          console.log('All Seats:', res.data.SeatsArrBusiness)
-          setDep(res.data.SeatsArrBusiness)
-        }
+        console.log('All Seats:', res.data)
+        setDep(res.data)
       })
       .catch((error) => {
         console.log(error)

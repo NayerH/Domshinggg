@@ -97,6 +97,7 @@ export default function DepFlights() {
           setFrom(flightsArrayDep[i].From)
           setTo(flightsArrayDep[i].To)
           console.log('Done 1:' + fNum)
+          window.localStorage.setItem('flightNumNew', fNum)
         } else {
           setDepFlag(false)
           setDepFlight('')
@@ -139,6 +140,8 @@ export default function DepFlights() {
   }
   const handleChangeCabin = (event) => {
     setCabin(event.target.value)
+    window.localStorage.setItem('cabinNew', cabin)
+    window.localStorage.setItem('cabinEdit', cabin)
   }
   const handleClickBook = () => {
     if (depFlag === true) {
@@ -149,10 +152,7 @@ export default function DepFlights() {
         'numOfPassengersEdit',
         window.localStorage.getItem('numOfPassengers')
       )
-      window.localStorage.setItem(
-        'priceDiff',
-        (priceDep - priceOld) * window.localStorage.getItem('numOfPassengers')
-      )
+      window.localStorage.setItem('priceDiff', priceDep - priceOld)
 
       window.location = '/depSeats'
     } else {
@@ -195,6 +195,7 @@ export default function DepFlights() {
         setNumOfPassengersEdit(window.localStorage.getItem('numOfPassengers'))
         setDepDateEdit(res.data.FlightDate)
         setCabinEdit(window.localStorage.getItem('cabin'))
+        window.localStorage.setItem('cabinEdit', cabinEdit)
         setBookingNumEdit(window.localStorage.getItem('bookingNumEdit'))
         setPriceOld(res.data.Price)
         // console.log(res.data.Price)

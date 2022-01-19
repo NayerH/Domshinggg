@@ -33,7 +33,6 @@ export default function CheckoutFormEdit(props) {
   const [paymentFlag, setPaymentFlag] = React.useState(false)
   const [errorMessage, setError] = useState('')
   const [flag, setFlag] = React.useState(props.flag || false)
-
   const stripe = useStripe()
   const elements = useElements()
   const handleClick = () => {
@@ -46,23 +45,26 @@ export default function CheckoutFormEdit(props) {
 
     setOpen(false)
   }
+
+  //cabinOld(cabinOld) cabinNew(cabinNew) flightNumOld(flightNumOld) flightNumNew(flightNumNew) oldSeats(oldSeats) newSeats(newSeats)
   async function handleBooking2() {
     console.log(window.localStorage.getItem('reservedSeatsRet'))
     await axios
       .post(
-        'http://localhost:3000/bookFlight',
+        'http://localhost:3000/editReservationFlight',
         {
-          retFlightNum: parseInt(
-            window.localStorage.getItem('retFlightNum'),
+          flightNumOld: parseInt(
+            window.localStorage.getItem('flightNumOld'),
             10
           ),
-          retFlightSeats: window.localStorage.getItem('reservedSeatsRet'),
-          depFlightNum: parseInt(
-            window.localStorage.getItem('depFlightNum'),
+          flightNumNew: parseInt(
+            window.localStorage.getItem('flightNumNew'),
             10
           ),
-          depFlightSeats: window.localStorage.getItem('reservedSeatsDep'),
-          cabin: window.localStorage.getItem('cabin'),
+          oldSeats: window.localStorage.getItem('oldSeats'),
+          newSeats: window.localStorage.getItem('newSeats'),
+          cabinOld: window.localStorage.getItem('cabinOld'),
+          cabinNew: window.localStorage.getItem('cabinNew'),
         },
         {
           headers: {
@@ -77,23 +79,25 @@ export default function CheckoutFormEdit(props) {
         console.log(error)
       })
   }
+
+  //reservationIndex(reservationIndex) departure(departure(true/false)) seats(newSeats) flightNumNew(flightNumNew) cabinNew(cabinNew) priceDifference(totalPriceDiff)
   async function handleBooking1() {
     await axios
       .post(
-        'http://localhost:3000/bookFlightUser',
+        'http://localhost:3000/editReservationUser',
         {
-          retFlightNum: parseInt(
-            window.localStorage.getItem('retFlightNum'),
+          flightNumNew: parseInt(
+            window.localStorage.getItem('flightNumNew'),
             10
           ),
-          retFlightSeats: window.localStorage.getItem('reservedSeatsRet'),
-          depFlightNum: parseInt(
-            window.localStorage.getItem('depFlightNum'),
+          cabinNew: window.localStorage.getItem('cabinNew'),
+          seats: window.localStorage.getItem('newSeats'),
+          priceDifference: parseInt(
+            window.localStorage.getItem('totalPriceDiff'),
             10
           ),
-          depFlightSeats: window.localStorage.getItem('reservedSeatsDep'),
-          cabin: window.localStorage.getItem('cabin'),
-          price: totalPrice,
+          departure: window.localStorage.getItem('departure'),
+          reservationIndex: window.localStorage.getItem('reservationIndex'),
         },
         {
           headers: {
@@ -128,7 +132,6 @@ export default function CheckoutFormEdit(props) {
     setFlag(true)
     return response.json()
   }
-
   const handleSubmit = async (event) => {
     // We don't want to let default form submission happen here,
     // which would refresh the page.
@@ -171,13 +174,9 @@ export default function CheckoutFormEdit(props) {
         severityVar = 'warning'
         setError(resJson.raw.message)
       }
-
       console.log(resJson.paid)
     }
   }
-  // useEffect(() => {
-  //   console.log(paymentFlag)
-  // }, [])
   return (
     <form style={{}} onSubmit={handleSubmit}>
       <Stack spacing={2} sx={{ width: '100%' }}>
