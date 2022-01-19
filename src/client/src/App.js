@@ -14,11 +14,10 @@ import RetSeats from './components/RetSeats'
 import DepSeats from './components/DepSeats'
 import DepFlights from './components/DepFlights'
 import RetFlights from './components/RetFlights'
-
+import ConfirmationDep from './components/ConfirmationDep'
 
 class App extends Component {
   render() {
-    
     return (
       <Router>
         <NavBar />
@@ -34,6 +33,7 @@ class App extends Component {
           <Route exact path='/depSeats' component={DepSeats} />
           <Route exact path='/depFlights' component={DepFlights} />
           <Route exact path='/retFlights' component={RetFlights} />
+          <Route exact path='/confirmationDep' component={ConfirmationDep} />
         </div>
       </Router>
     )

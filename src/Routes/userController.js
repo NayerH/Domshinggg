@@ -192,12 +192,14 @@ exports.signup = async (req, res) => {
     code,
     passNum,
   } = req.body
+  // console.log(email)
   let user = false
   // console.log('METHOD ACTIVE')
   try {
     let user = await User.findOne({
-      email,
+      username: email,
     })
+    // console.log(user)
     if (user) {
       return res.json({
         statusCode: 0,
@@ -216,12 +218,13 @@ exports.signup = async (req, res) => {
       })
       newUser.password = bcrypt.hashSync(password, 10)
       newUser.save(function (err, user) {
+        console.log(user)
+        console.log(err)
         if (err) {
-          return (res.status = (400).send({
-            message: err,
-          }))
+          // console.log(err)
+          return res.json(err)
         } else {
-          // user.password = undefined;
+          // console.log(user)
           return res.json(user)
         }
       })
@@ -291,14 +294,14 @@ exports.bookFlightUser = (req, res) => {
 
 //reservationNumber
 exports.emailItinerary = (req, res) => {
-  // console.log(req.user)
+  console.log(req.body)
   User.findOne({ username: req.user.user.username })
     .then((user) => {
       let reservation = null
       for (let i = 0; i < user.reservations.length; i++) {
         if (
           user.reservations[i].bookingNo ===
-          Integer.parseInt(req.body.reservationNumber, 10)
+          parseInt(req.body.reservationNumber, 10)
         ) {
           reservation = user.reservations[i]
           break
@@ -447,10 +450,10 @@ exports.payForBooking = (req, res) => {
             err.message = 'unexpected error'
             break
         }
-        return res.status(400).send(err)
+        return res.send(err)
       }
       console.log(charge)
-      return res.status(200).send(charge)
+      return res.send(charge)
     }
   )
 }

@@ -162,18 +162,21 @@ exports.getFlights = (req, res) => {
 
 //depAir arrAir flightDate numOfPassengers cabin
 exports.getFlightsUserEdit = (req, res) => {
-  const flightSearch = {};
-  flightSearch.From = req.body.depAir;
-  flightSearch.To = req.body.arrAir;
-  flightSearch.FlightDate = new Date(req.body.flightDate);
-  let numOfPassengers = parseInt(req.body.numOfPassengers, 10);
+  console.log(req.body)
+  const flightSearch = {}
+  flightSearch.From = req.body.depAir
+  flightSearch.To = req.body.arrAir
+  flightSearch.FlightDate = new Date(req.body.flightDate)
+  let numOfPassengers = parseInt(req.body.numOfPassengers, 10)
+  console.log(flightSearch)
   Flight.find(flightSearch).then((flights) => {
     if (!(flights instanceof Array)) {
-      // console.log('NOT ARRAY')
+      console.log('NOT ARRAY')
       let tempFlights = []
       tempFlights.push(flights)
       flights = tempFlights
     }
+    console.log(flights)
     if (req.body.cabin === 'Business') {
       flights = flights.filter(
         (flight) => flight.BusinessNumOfSeats >= numOfPassengers
@@ -356,13 +359,13 @@ exports.getSeatsEdit = (req, res) => {
   // console.log(req.body)
   Flight.findOne({ FlightNumber: req.body.FlightNum })
     .then((FlightRes) => {
-        const result = null;
-        if (req.body.cabin === 'Economy') {
-            result = FlightRes.SeatsArrEconomy
-        } else {
-            result = FlightRes.SeatsArrBusiness
-        }
-        return res.json(result)
+      const result = null
+      if (req.body.cabin === 'Economy') {
+        result = FlightRes.SeatsArrEconomy
+      } else {
+        result = FlightRes.SeatsArrBusiness
+      }
+      return res.json(result)
     })
     .catch((err) => {
       console.log(err)
@@ -374,23 +377,23 @@ exports.editSeatsFlight = (req, res) => {
   // console.log(req.body)
   Flight.findOne({ FlightNumber: req.body.FlightNum })
     .then((flightRes) => {
-      let oldFlightSeats = req.body.oldSeats.split(',');
-      let newFlightSeats = req.body.newSeats.split(',');
-      for(let i = 0; i < oldFlightSeats.length; i++){
+      let oldFlightSeats = req.body.oldSeats.split(',')
+      let newFlightSeats = req.body.newSeats.split(',')
+      for (let i = 0; i < oldFlightSeats.length; i++) {
         if (req.body.cabin === 'Economy') {
-          flightRes.SeatsArrEconomy[oldFlightSeats[i]] = false;
+          flightRes.SeatsArrEconomy[oldFlightSeats[i]] = false
         } else {
-          flightRes.SeatsArrBusiness[oldFlightSeats[i]] = false;
+          flightRes.SeatsArrBusiness[oldFlightSeats[i]] = false
         }
       }
-      for(let i = 0; i < newFlightSeats.length; i++){
+      for (let i = 0; i < newFlightSeats.length; i++) {
         if (req.body.cabin === 'Economy') {
-          flightRes.SeatsArrEconomy[newFlightSeats[i]] = true;
+          flightRes.SeatsArrEconomy[newFlightSeats[i]] = true
         } else {
-          flightRes.SeatsArrBusiness[newFlightSeats[i]] = true;
+          flightRes.SeatsArrBusiness[newFlightSeats[i]] = true
         }
       }
-      return res.json("SUCCESS")
+      return res.json('SUCCESS')
     })
     .catch((err) => {
       console.log(err)

@@ -124,7 +124,6 @@ export default function SignUp() {
 
   const emailChange = (e) => {
     setEmail(e.target.value)
-    console.log(email)
   }
 
   const passwordChange = (e) => {
@@ -163,16 +162,14 @@ export default function SignUp() {
   }
   const history = useHistory()
 
-  console.log(window.localStorage, 'dasasd')
-
   const handleSignup = async (e) => {
     e.preventDefault()
     await axios
       .post('http://localhost:3000/signup', {
         email: email,
         password: password,
-        lastName: lastName,
         firstName: firstName,
+        lastName: lastName,
         phoneNo: phoneNo,
         address: address,
         code: code,
@@ -193,10 +190,9 @@ export default function SignUp() {
           setRoute(false)
         } else {
           console.log('routeedddd')
-          history.push('/')
+          history.push('/login')
         }
       })
-
       .catch((err) => {
         console.log(err)
       })

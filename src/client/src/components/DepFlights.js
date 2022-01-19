@@ -1,7 +1,7 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import axios from 'axios'
 import { makeStyles } from '@material-ui/core/styles'
-import { Snackbar } from '@material-ui/core'
+import { Snackbar, Typography } from '@material-ui/core'
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
 import TextField from '@mui/material/TextField'
@@ -9,7 +9,7 @@ import InputLabel from '@mui/material/InputLabel'
 import MenuItem from '@mui/material/MenuItem'
 import FormControl from '@mui/material/FormControl'
 import Select from '@mui/material/Select'
-import FlightCard2 from './FlightCard2'
+import FlightCard3 from './FlightCard3'
 import Stack from '@mui/material/Stack'
 import MuiAlert from '@mui/material/Alert'
 
@@ -44,8 +44,6 @@ const useStyles = makeStyles({
     marginTop: '2vw',
   },
 })
-var clicksDep = 0
-var clicksArr = 0
 
 export default function DepFlights() {
   const classes = useStyles()
@@ -69,6 +67,15 @@ export default function DepFlights() {
   const [priceRet, setPriceRet] = React.useState(0)
   const [from, setFrom] = React.useState('')
   const [to, setTo] = React.useState('')
+
+  const [bookingNumEdit, setBookingNumEdit] = React.useState(-1)
+  const [numOfPassengersEdit, setNumOfPassengersEdit] = React.useState(-1)
+  const [flightNumEdit, setFlightNumEdit] = React.useState(-1)
+  const [depEdit, SetDepEdit] = React.useState('')
+  const [retEdit, SetRetEdit] = React.useState('')
+  const [depDateEdit, setDepDateEdit] = React.useState('')
+  const [cabinEdit, setCabinEdit] = React.useState('')
+  const [priceOld, setPriceOld] = React.useState(0)
 
   const handleClick = () => {
     setOpen(true)
@@ -134,58 +141,68 @@ export default function DepFlights() {
     setCabin(event.target.value)
   }
   const handleClickBook = () => {
-    if (depFlag === true && retFlag === true) {
-      // console.log(depFlight + ' ' + retFlight)
-      // console.log(window.localStorage.getItem('depFightNum'))
+    if (depFlag === true) {
+      console.log(window.localStorage.getItem('numOfPassengers'))
       window.localStorage.setItem('depFlightNum', depFlight)
-      window.localStorage.setItem('retFlightNum', retFlight)
       window.localStorage.setItem('cabin', cabin)
-      window.localStorage.setItem('depDate', depDate)
-      window.localStorage.setItem('retDate', arrDate)
-      window.localStorage.setItem('from', from)
-      window.localStorage.setItem('to', to)
-      window.localStorage.setItem('priceDep', priceDep)
-      window.localStorage.setItem('priceRet', priceRet)
+      window.localStorage.setItem(
+        'numOfPassengersEdit',
+        window.localStorage.getItem('numOfPassengers')
+      )
+      window.localStorage.setItem(
+        'priceDiff',
+        (priceDep - priceOld) * window.localStorage.getItem('numOfPassengers')
+      )
 
-      const numOfPassengers = parseInt(adults, 10) + parseInt(children, 10)
-      window.localStorage.setItem('numOfPassengers', numOfPassengers)
-      //window.localStorage.setItem('price', price)
-
-      window.location = '/chooseSeats'
+      window.location = '/depSeats'
     } else {
       handleClick()
     }
   }
-  const handleSearch = async (
-    adults,
-    children,
-    depAir,
-    arrAir,
-    cabin,
-    depDate,
-    arrDate
-  ) => {
+  const handleSearch = async (dep, arr, fDate, passengers, cab) => {
     const res = await axios
-      .post('http://localhost:3000/searchFlightUser', {
-        depAir: depAir,
-        arrAir: arrAir,
-        depDate: depDate,
-        arrDate: arrDate,
-        children: children,
-        adults: adults,
-        cabin: cabin,
-      })
+      .post(
+        'http://localhost:3000/getFlightsUserEdit',
+        {
+          depAir: dep,
+          arrAir: arr,
+          flightDate: fDate,
+          numOfPassengers: passengers,
+          cabin: cab,
+        },
+        {
+          headers: {
+            token: headers,
+          },
+        }
+      )
       .then((res) => {
-        setDepFlag(false)
-        setRetFlag(false)
-        setFlightsArrayDep(res.data.depFlights)
-        setFlightsArrayRet(res.data.arrFlights)
-        setCabin(res.data.cabin)
+        setFlightsArrayDep(res.data.resFlights)
       })
       .catch((error) => {
         console.log(error)
       })
   }
+  useEffect(() => {
+    axios
+      .post('http://localhost:3000/findFlight', {
+        flightNum: window.localStorage.getItem('flightNumEdit'),
+      })
+      .then((res) => {
+        console.log(res.data.Price + 50)
+        SetDepEdit(res.data.From)
+        SetRetEdit(res.data.To)
+        setNumOfPassengersEdit(window.localStorage.getItem('numOfPassengers'))
+        setDepDateEdit(res.data.FlightDate)
+        setCabinEdit(window.localStorage.getItem('cabin'))
+        setBookingNumEdit(window.localStorage.getItem('bookingNumEdit'))
+        setPriceOld(res.data.Price)
+        // console.log(res.data.Price)
+      })
+      .catch((error) => {
+        console.log(error)
+      })
+  }, [])
 
   return (
     <div>
@@ -194,43 +211,7 @@ export default function DepFlights() {
           <br />
           <h1>Search</h1>
           <br />
-          <br />
-          <TextField
-            className={classes.box}
-            id='outlined-basic'
-            label='Number Of Adults'
-            variant='outlined'
-            onChange={handleChangeAdults}
-          />{' '}
-          <br />
-          <br />
-          <TextField
-            className={classes.box}
-            id='outlined-basic'
-            label='Number Of Children'
-            variant='outlined'
-            onChange={handleChangeChildren}
-          />{' '}
-          <br />
-          <br />
-          <TextField
-            className={classes.box}
-            id='outlined-basic'
-            onChange={handleChangeDepAir}
-            label='Departure Airport'
-            variant='outlined'
-          />
-          <br />
-          <br />
-          <TextField
-            className={classes.box}
-            id='outlined-basic'
-            onChange={handleChangeArrAir}
-            label='Arrival Airport'
-            variant='outlined'
-          />
-          <br />
-          <br />
+          <Typography>Cabin Class</Typography>
           <Box sx={{ width: 120 }}>
             <FormControl fullWidth>
               <InputLabel id='demo-simple-select-label'>Cabin</InputLabel>
@@ -246,7 +227,8 @@ export default function DepFlights() {
               </Select>
             </FormControl>
           </Box>
-          <h4>Departure Date</h4>
+          <br /> <br />
+          <Typography>Departure Date</Typography>
           <TextField
             required
             className={classes.box}
@@ -261,13 +243,11 @@ export default function DepFlights() {
             variant='contained'
             onClick={() => {
               handleSearch(
-                adults,
-                children,
-                depAir,
-                arrAir,
-                cabin,
-                depDate,
-                arrDate
+                depEdit,
+                retEdit,
+                depDateEdit,
+                numOfPassengersEdit,
+                cabinEdit
               )
             }}
           >
@@ -277,13 +257,13 @@ export default function DepFlights() {
         <div className={classes.flights}>
           <h2>Departure Flights</h2>
           {flightsArrayDep.map((d) => (
-            <FlightCard2
+            <FlightCard3
               handleSelected={handleSelected}
               fNum={d.FlightNumber}
               arrTime={d.ArrivalTime.toString().substring(11, 19)}
               depTime={d.DepartureTime.toString().substring(11, 19)}
               cabin={cabin}
-              price={d.Price}
+              price={d.Price - priceOld}
               duration={d.TripDuration}
               baggage={d.Baggage}
               id={d._id}

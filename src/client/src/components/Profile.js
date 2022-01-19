@@ -119,7 +119,21 @@ export default function Profile() {
   const handleRetSeats = () => {
     window.location = '/retSeats'
   }
-  const handleDepFlights = () => {
+  const handleDepFlights = (
+    bookingNoEdit,
+    depFlightNumEdit,
+    depFlightSeatsEdit,
+    PriceEdit,
+    CabinEdit
+  ) => {
+    console.log('my seats:', depFlightSeatsEdit)
+    var depPassengers = depFlightSeatsEdit.split(',')
+    window.localStorage.setItem('bookingNumEdit', bookingNoEdit)
+    window.localStorage.setItem('flightNumEdit', depFlightNumEdit)
+    window.localStorage.setItem('numOfPassengers', depPassengers.length)
+    window.localStorage.setItem('oldSeats', depFlightSeatsEdit)
+    window.localStorage.setItem('price', PriceEdit)
+    window.localStorage.setItem('cabin', CabinEdit)
     window.location = '/depFlights'
   }
   const handleRetFlights = () => {
@@ -137,22 +151,26 @@ export default function Profile() {
       window.location = '/'
     }
   }, [])
-  const handleEmailConfirmation = () => {
-    handleClick3()
-    // axios
-    //   .post(
-    //     'http://localhost:3000/getUser',
-    //     {},
-    //     {
-    //       headers: {
-    //         token: headers,
-    //       },
-    //     }
-    //   )
-    //   .then((res) => {})
-    //   .catch((error) => {
-    //     console.log(error)
-    //   })
+  const handleEmailConfirmation = (resNum) => {
+    axios
+      .post(
+        'http://localhost:3000/emailItinerary',
+        {
+          reservationNumber: resNum,
+        },
+        {
+          headers: {
+            token: headers,
+          },
+        }
+      )
+      .then((res) => {
+        console.log(res.data)
+        handleClick3()
+      })
+      .catch((error) => {
+        console.log(error)
+      })
   }
   useEffect(() => {
     axios
@@ -171,6 +189,7 @@ export default function Profile() {
         setPassportNum(res.data.passportNo)
         setUsername(res.data.username)
         setBookings(res.data.reservations)
+        console.log('Bookings', res.data.reservations)
       })
       .catch((error) => {
         console.log(error)
@@ -290,7 +309,13 @@ export default function Profile() {
                     </h4>
                     <Button
                       onClick={() => {
-                        handleDepFlights()
+                        handleDepFlights(
+                          d.bookingNo,
+                          d.DepartureFlightNum,
+                          d.DepartureFlightSeats,
+                          d.Price,
+                          d.Cabin
+                        )
                       }}
                       style={{
                         marginLeft: '2vw',
@@ -300,7 +325,7 @@ export default function Profile() {
                       }}
                       variant='contained'
                     >
-                      edit
+                      edit1
                     </Button>
                   </div>
                   <div style={{ display: 'flex' }}>
@@ -382,7 +407,7 @@ export default function Profile() {
                   </Button>
                   <Button
                     onClick={() => {
-                      handleEmailConfirmation()
+                      handleEmailConfirmation(d.bookingNo)
                     }}
                     style={{
                       marginLeft: '2vw',

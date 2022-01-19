@@ -81,9 +81,9 @@ export default function Seats() {
     //to unselect a seat
     if (isAlreadySelected && clicksDep != 0) {
       reservedArrayTemp.splice(k, 1)
-      // setReservedArray(
-      //   reservedArray.filter((element) => element.seatNumber != index)
-      // )
+      setReservedArrayDep(
+        reservedArrayTemp.filter((element) => element.seatNumber !== index)
+      )
       e.target.className = classes.av
       console.log('Unselecting')
       console.log(reservedArrayDep)

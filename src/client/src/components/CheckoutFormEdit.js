@@ -27,7 +27,7 @@ const Alert = React.forwardRef(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant='filled' {...props} />
 })
 
-export default function CheckoutForm(props) {
+export default function CheckoutFormEdit(props) {
   var headers = window.localStorage.getItem('token')
   const [open, setOpen] = React.useState(false)
   const [paymentFlag, setPaymentFlag] = React.useState(false)

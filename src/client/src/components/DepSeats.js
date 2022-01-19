@@ -7,18 +7,18 @@ import Stack from '@mui/material/Stack'
 import Snackbar from '@mui/material/Snackbar'
 import MuiAlert from '@mui/material/Alert'
 import axios from 'axios'
+import { Typography } from '@material-ui/core'
 
 const Alert = React.forwardRef(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant='filled' {...props} />
 })
 
-const count = parseInt(window.localStorage.getItem('numOfPassengers'), 10)
 const fNumDep = parseInt(window.localStorage.getItem('depFlightNum'), 10)
-const fNumRet = parseInt(window.localStorage.getItem('retFlightNum'), 10)
 const cabin = window.localStorage.getItem('cabin')
+const count = window.localStorage.getItem('numOfPassengersEdit')
+const oldSeatsArr = window.localStorage.getItem('oldSeats').split(',')
 
 var clicksDep = 0
-var clicksRet = 0
 
 const useStyles = makeStyles((theme) => ({
   selected: {
@@ -27,9 +27,17 @@ const useStyles = makeStyles((theme) => ({
     height: '5vw',
     border: 'white',
     borderRadius: 5,
+    cursor: 'pointer',
   },
   unav: {
     backgroundColor: '#A0A0A0',
+    width: '8vw',
+    height: '5vw',
+    border: 'white',
+    borderRadius: 5,
+  },
+  old: {
+    backgroundColor: '#FFF14C',
     width: '8vw',
     height: '5vw',
     border: 'white',
@@ -55,7 +63,6 @@ export default function DepSeats() {
   const [ret, setRet] = React.useState([])
   const [open, setOpen] = React.useState(false)
   const headers = window.localStorage.getItem('token')
-
   const handleClick = () => {
     setOpen(true)
   }
@@ -81,14 +88,12 @@ export default function DepSeats() {
     //to unselect a seat
     if (isAlreadySelected && clicksDep != 0) {
       reservedArrayTemp.splice(k, 1)
-      // setReservedArray(
-      //   reservedArray.filter((element) => element.seatNumber != index)
-      // )
+
       e.target.className = classes.av
       console.log('Unselecting')
       console.log(reservedArrayDep)
       clicksDep--
-      if (clicksDep === count) {
+      if (clicksDep == count) {
         setSeatsDep(true)
         console.log('DONE')
         window.localStorage.setItem('reservedSeatsDep', reservedArrayDep)
@@ -103,8 +108,8 @@ export default function DepSeats() {
       clicksDep++
       setReservedArrayDep(reservedArrayTemp)
       console.log(reservedArrayDep)
-      // console.log('You picked seat number', index + 1)
-      if (clicksDep === count) {
+      console.log('clicks:', clicksDep, 'count:', count)
+      if (clicksDep == count) {
         setSeatsDep(true)
         console.log('DONE')
         window.localStorage.setItem('reservedSeatsDep', reservedArrayDep)
@@ -119,8 +124,9 @@ export default function DepSeats() {
       clicksDep++
       setReservedArrayDep(reservedArrayTemp)
       console.log(reservedArrayDep)
-      // console.log('You picked seat number', index + 1)
-      if (clicksDep === count) {
+      console.log('clicks tany:', clicksDep, 'count:', count)
+
+      if (clicksDep == count) {
         setSeatsDep(true)
         console.log('DONE')
         window.localStorage.setItem('reservedSeatsDep', reservedArrayDep)
@@ -128,84 +134,18 @@ export default function DepSeats() {
       return
     }
   }
-  const handleSelectRet = (e, index) => {
-    var reservedArrayTemp = reservedArrayRet
-    var isAlreadySelected = false
-    var k = 0
-
-    for (k; k < reservedArrayTemp.length; k++) {
-      //to check whether this room is already selected or not
-      if (reservedArrayTemp[k].seatNumber === index) {
-        isAlreadySelected = true
-        break
-      }
-    }
-    //to unselect a seat
-    if (isAlreadySelected && clicksRet != 0) {
-      reservedArrayTemp.splice(k, 1)
-      // setReservedArray(
-      //   reservedArray.filter((element) => element.seatNumber != index)
-      // )
-      e.target.className = classes.av
-      console.log('Unselecting')
-      console.log(reservedArrayRet)
-      clicksRet--
-      if (clicksRet === count) {
-        setSeatsRet(true)
-        console.log('DONE 2')
-        window.localStorage.setItem('reservedSeatsRet', reservedArrayRet)
-      }
-
-      return
-    }
-    //first selection
-    if (clicksRet === 0) {
-      console.log('1st Selection')
-      reservedArrayTemp.push(index)
-      e.target.className = classes.selected
-      clicksRet++
-      setReservedArrayRet(reservedArrayTemp)
-      console.log(reservedArrayRet)
-      // console.log('You picked seat number', index + 1)
-      if (clicksRet === count) {
-        setSeatsRet(true)
-        console.log('DONE 2')
-        window.localStorage.setItem('reservedSeatsRet', reservedArrayRet)
-      }
-
-      return
-    }
-    //not first selection
-    if (clicksRet < count) {
-      console.log('not first selection')
-      reservedArrayTemp.push(index)
-      e.target.className = classes.selected
-      clicksRet++
-      setReservedArrayRet(reservedArrayTemp)
-      console.log(reservedArrayRet)
-      // console.log('You picked seat number', index + 1)
-      if (clicksRet === count) {
-        setSeatsRet(true)
-        console.log('DONE 2')
-        window.localStorage.setItem('reservedSeatsRet', reservedArrayRet)
-      }
-
-      return
-    }
-  }
   const handleClickSeats = () => {
-    if (seatsRet && seatsDep) {
-      window.location = '/confirmation'
+    if (seatsDep) {
+      window.location = '/confirmationDep'
     } else {
       handleClick()
     }
   }
-
   useEffect(async () => {
     await axios
       .post(
         'http://localhost:3000/findFlight',
-        { flightNum: fNumDep },
+        { flightNum: window.localStorage.getItem('depFlightNum') },
         {
           headers: {
             token: headers,
@@ -213,36 +153,13 @@ export default function DepSeats() {
         }
       )
       .then((res) => {
-        console.log(res.data)
+        console.log('Flight: ', res.data)
         if (cabin === 'Economy') {
-          console.log(res.data.SeatsArrEconomy)
+          console.log('All Seats:', res.data.SeatsArrEconomy)
           setDep(res.data.SeatsArrEconomy)
         } else {
-          console.log(res.data.SeatsArrBusiness)
+          console.log('All Seats:', res.data.SeatsArrBusiness)
           setDep(res.data.SeatsArrBusiness)
-        }
-      })
-      .catch((error) => {
-        console.log(error)
-      })
-    await axios
-      .post(
-        'http://localhost:3000/findFlight',
-        { flightNum: fNumRet },
-        {
-          headers: {
-            token: headers,
-          },
-        }
-      )
-      .then((res) => {
-        console.log(res.data)
-        if (cabin === 'Economy') {
-          console.log(res.data.SeatsArrEconomy)
-          setRet(res.data.SeatsArrEconomy)
-        } else {
-          console.log(res.data.SeatsArrBusiness)
-          setRet(res.data.SeatsArrBusiness)
         }
       })
       .catch((error) => {
@@ -271,6 +188,9 @@ export default function DepSeats() {
             <h1 style={{ marginLeft: '12vw', marginTop: '1vw' }}>
               Choose Your Departure Seats
             </h1>
+            <Typography style={{ marginLeft: '17vw', marginTop: '1vw' }}>
+              *Yellow seats are your old seats*
+            </Typography>
           </div>
           <br />
           <br />
@@ -283,7 +203,25 @@ export default function DepSeats() {
             }}
           >
             {dep.map((seat, index) => {
+              // console.log('my old seats:', oldSeatsArr)
               if (seat === true) {
+                var i = 0
+                for (i; i < oldSeatsArr.length; i++) {
+                  if (parseInt(oldSeatsArr[i], 10) == index) {
+                    return (
+                      <div style={{ marginLeft: '1vw', marginTop: '0.5vw' }}>
+                        <Button
+                          onClick={(e) => {
+                            handleSelectDep(e, index)
+                          }}
+                          className={classes.old}
+                        >
+                          your seat
+                        </Button>
+                      </div>
+                    )
+                  }
+                }
                 return (
                   <div style={{ marginLeft: '1vw', marginTop: '0.5vw' }}>
                     <Button className={classes.unav} disabled>
@@ -292,7 +230,6 @@ export default function DepSeats() {
                   </div>
                 )
               }
-
               if (seat === false) {
                 return (
                   <div
@@ -314,14 +251,12 @@ export default function DepSeats() {
             })}
           </div>
         </div>
-        <br />
-        <br />
 
         <div>
           <br />
           <br />
-          <br />
-          <br />
+        </div>
+        <div>
           <Button
             onClick={handleClickSeats}
             variant='contained'

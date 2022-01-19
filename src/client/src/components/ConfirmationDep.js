@@ -19,23 +19,24 @@ import { Elements } from '@stripe/react-stripe-js'
 import { loadStripe } from '@stripe/stripe-js'
 
 import CheckoutForm from './CheckoutForm'
+import CheckoutFormEdit from './CheckoutFormEdit'
 const stripePromise = loadStripe(
   'pk_test_51KIj0pFpizc2ReMjwxii0jQQD2ECUJO0FHermtilNTU93Ef7dIjY4CnZ0CZlf4nNEW7kRjILeXf49NVrjQuNKyy300dTk16KIx'
 )
 
 const seatsDep = window.localStorage.getItem('reservedSeatsDep')
-const seatsRet = window.localStorage.getItem('reservedSeatsRet')
+// const seatsRet = window.localStorage.getItem('reservedSeatsRet')
 const fNumDep = parseInt(window.localStorage.getItem('depFlightNum'), 10)
-const fNumRet = parseInt(window.localStorage.getItem('retFlightNum'), 10)
+// const fNumRet = parseInt(window.localStorage.getItem('retFlightNum'), 10)
 const cabin = window.localStorage.getItem('cabin')
-const retD = window.localStorage.getItem('retDate')
+// const retD = window.localStorage.getItem('retDate')
 const depD = window.localStorage.getItem('depDate')
 const depAir = window.localStorage.getItem('from')
-const retAir = window.localStorage.getItem('to')
+// const retAir = window.localStorage.getItem('to')
 const numOfPassengers = window.localStorage.getItem('numOfPassengers')
 const priceDep = parseInt(window.localStorage.getItem('priceDep'), 10)
-const priceRet = parseInt(window.localStorage.getItem('priceRet'), 10)
-const totalPrice = numOfPassengers * (priceDep + priceRet)
+// const priceRet = parseInt(window.localStorage.getItem('priceRet'), 10)
+const totalPrice = numOfPassengers * priceDep
 window.localStorage.setItem('totalPrice', totalPrice)
 const style = {
   position: 'absolute',
@@ -120,7 +121,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }))
 
-export default function Confirmation() {
+export default function ConfirmationDep() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [errorMessage, setError] = useState('')
@@ -130,15 +131,21 @@ export default function Confirmation() {
   const [openPayment, setOpenPayment] = React.useState(false)
   const handleOpenPayment = () => setOpenPayment(true)
   const handleClosePayment = () => setOpenPayment(false)
+  const [flag, setFlag] = React.useState(false)
 
-  useEffect(() => {}, [])
+  useEffect(() => {
+    console.log('flag:', window.localStorage.getItem('flag'))
+  }, [])
 
   const handleClickConfirm = () => {
     console.log(window.localStorage.getItem('token'))
     if (window.localStorage.getItem('token') === 'undefined') {
       setLoginVisible('visible')
     } else {
-      handleOpenPayment()
+      if (parseInt(window.localStorage.getItem('priceDiff'), 10) == 0) {
+      } else {
+        handleOpenPayment()
+      }
       // handleBooking1()
       // handleBooking2()
       // window.location = '/my-profile'
@@ -250,7 +257,9 @@ export default function Confirmation() {
         }
         window.localStorage.setItem('token', res.headers.token)
         headers = res.headers.token
-        handleClickConfirm()
+        handleBooking1()
+        handleBooking2()
+        window.location = '/my-profile'
       })
       .catch((err) => {
         console.log(err)
@@ -271,28 +280,36 @@ export default function Confirmation() {
         <div style={{ marginLeft: '20vw' }}>
           <div style={{ display: 'flex' }}>
             <div>
-              <h1>Departure Details</h1>
+              <h1 style={{ color: 'green' }}>Departure Details</h1>
               <br />
+              <h4 style={{ color: 'green' }}>(updated)</h4>
               <h2>Flight Number: {fNumDep} </h2>
               <h2>Departure Airport: {depAir} </h2>
               <h2>Departure Date: {depD} </h2>
               <h2>Seat Numbers In Departure Flight: {seatsDep} </h2>
-              <h2>Price: EGP {priceDep} </h2>
+
+              <h2>
+                Price Differnce: EGP {window.localStorage.getItem('priceDiff')}{' '}
+              </h2>
             </div>
             <div style={{ marginLeft: '15vw' }}>
               <h1>Return Details</h1>
               <br />
-              <h2>Flight Number: {fNumRet}</h2>
-              <h2>Return Airport: {retAir} </h2>
-              <h2>Return Date: {retD}</h2>
-              <h2>Seat Numbers In Return Flight: {seatsRet} </h2>
-              <h2>Price: EGP {priceRet} </h2>
+              <h2>Flight Number: </h2>
+              <h2>Return Airport: </h2>
+              <h2>Return Date: </h2>
+              <h2>Seat Numbers In Return Flight: </h2>
+              <h2>Price: EGP </h2>
             </div>
           </div>
           <br />
           <br />
+          <br />
           <h2>Cabin: {cabin} </h2>
-          <h2>Total Price: EGP {totalPrice}</h2>
+          <h2 style={{ color: 'green' }}>
+            Price Difference To Be Paid: EGP{' '}
+            {window.localStorage.getItem('priceDiff')}{' '}
+          </h2>
         </div>
         <br />
         <br />
@@ -406,18 +423,16 @@ export default function Confirmation() {
           </Container>
         </div>
       </div>
-      {/* Modal Payment */}
       <div>
-        <Button onClick={handleOpenPayment}>Open modal</Button>
         <Modal
           open={openPayment}
           onClose={handleClosePayment}
           aria-labelledby='modal-modal-title'
           aria-describedby='modal-modal-description'
         >
-          <Box sx={style} style={{ width: '50vw' }}>
+          <Box sx={style} style={{ width: '30vw', height: '15vw' }}>
             <Elements stripe={stripePromise}>
-              <CheckoutForm />
+              <CheckoutFormEdit />
             </Elements>
           </Box>
         </Modal>
