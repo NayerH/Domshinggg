@@ -163,6 +163,7 @@ export default function Profile() {
     window.localStorage.setItem('flightNumOld', depFlightNumEdit)
     window.localStorage.setItem('departure', departure)
     window.localStorage.setItem('reservationIndex', index)
+    console.log('my seats:', depFlightSeatsEdit)
     if (departure) {
       window.location = '/depFlights'
     } else {
