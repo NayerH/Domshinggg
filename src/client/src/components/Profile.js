@@ -114,7 +114,7 @@ export default function Profile() {
     setNewPass(event.target.value)
   }
 
-  const handleDepSeats = (seats, fNum, cabin, index) => {
+  const handleDepSeats = (seats, fNum, cabin, index, departure) => {
     window.localStorage.setItem('mySeats', seats)
     window.localStorage.setItem('fNum', fNum)
     window.localStorage.setItem('priceDiff', 0)
@@ -124,8 +124,15 @@ export default function Profile() {
 
     window.localStorage.setItem('flightNumOld', fNum)
     window.localStorage.setItem('flightNumNew', fNum)
+    if (departure) {
+      // window.localStorage.setItem('flightNumEdit', fNum)
 
-    window.location = '/depSeats'
+      window.location = '/depSeats'
+    } else {
+      // window.localStorage.setItem('flightNumEdit', fNum)
+
+      window.location = '/retSeats'
+    }
   }
   const handleRetSeats = (seats, fNum, cabin, index) => {
     window.localStorage.setItem('mySeats', seats)
@@ -397,7 +404,8 @@ export default function Profile() {
                           d.DepartureFlightSeats,
                           d.DepartureFlightNum,
                           d.Cabin,
-                          index
+                          index,
+                          true
                         )
                       }}
                       style={{
@@ -448,7 +456,8 @@ export default function Profile() {
                           d.ReturnFlightSeats,
                           d.ReturnFlightNum,
                           d.Cabin,
-                          index
+                          index,
+                          false
                         )
                       }}
                       style={{

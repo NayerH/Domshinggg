@@ -18,7 +18,7 @@ const cabin = window.localStorage.getItem('cabin')
 const count = window.localStorage.getItem('mySeats').split(',').length
 window.localStorage.setItem('numOfPassengersEdit', count)
 const oldSeatsArr = window.localStorage.getItem('mySeats').split(',')
-
+console.log("THIS IS A TETS",oldSeatsArr)
 var clicksDep = 0
 
 const useStyles = makeStyles((theme) => ({
@@ -210,7 +210,11 @@ export default function DepSeats() {
               if (seat === true) {
                 var i = 0
                 for (i; i < oldSeatsArr.length; i++) {
-                  if (parseInt(oldSeatsArr[i], 10) == index) {
+                  if (
+                    parseInt(oldSeatsArr[i], 10) == index &&
+                    window.localStorage.getItem('flightNumNew') ==
+                      window.localStorage.getItem('flightNumOld')
+                  ) {
                     return (
                       <div style={{ marginLeft: '1vw', marginTop: '0.5vw' }}>
                         <Button

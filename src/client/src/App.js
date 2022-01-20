@@ -15,6 +15,7 @@ import DepSeats from './components/DepSeats'
 import DepFlights from './components/DepFlights'
 import RetFlights from './components/RetFlights'
 import ConfirmationDep from './components/ConfirmationDep'
+import ConfirmationRet from './components/ConfirmationRet'
 
 class App extends Component {
   render() {
@@ -34,6 +35,7 @@ class App extends Component {
           <Route exact path='/depFlights' component={DepFlights} />
           <Route exact path='/retFlights' component={RetFlights} />
           <Route exact path='/confirmationDep' component={ConfirmationDep} />
+          <Route exact path='/confirmationRet' component={ConfirmationRet} />
         </div>
       </Router>
     )

@@ -26,7 +26,7 @@ const stripePromise = loadStripe(
 
 const seatsDep = window.localStorage.getItem('reservedSeatsDep')
 // const seatsRet = window.localStorage.getItem('reservedSeatsRet')
-const fNumDep = parseInt(window.localStorage.getItem('fNum'), 10)
+const fNumDep = parseInt(window.localStorage.getItem('flightNumNew'), 10)
 // const fNumRet = parseInt(window.localStorage.getItem('retFlightNum'), 10)
 const cabin = window.localStorage.getItem('cabin')
 // const retD = window.localStorage.getItem('retDate')
@@ -124,7 +124,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }))
 
-export default function ConfirmationDep() {
+export default function ConfirmationRet() {
   const classes = useStyles()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -198,7 +198,7 @@ export default function ConfirmationDep() {
           cabinNew: window.localStorage.getItem('cabinEdit'),
           seats: window.localStorage.getItem('newSeats'),
           priceDifference: 0,
-          departure: true,
+          departure: false,
           reservationIndex: window.localStorage.getItem('reservationIndexEdit'),
         },
         {
@@ -278,13 +278,13 @@ export default function ConfirmationDep() {
         <div style={{ marginLeft: '20vw' }}>
           <div style={{ display: 'flex' }}>
             <div>
-              <h1 style={{ color: 'green' }}>Departure Details</h1>
+              <h1 style={{ color: 'green' }}>Return Details</h1>
               <br />
               <h4 style={{ color: 'green' }}>(updated)</h4>
               <h2>Flight Number: {fNumDep} </h2>
-              <h2>Departure Airport: {depAir} </h2>
-              <h2>Departure Date: {depD} </h2>
-              <h2>Seat Numbers In Departure Flight: {seatsDep} </h2>
+              <h2>Return Airport: {depAir} </h2>
+              <h2>Return Date: {depD} </h2>
+              <h2>Seat Numbers In Return Flight: {seatsDep} </h2>
 
               <h2>
                 Price Differnce: EGP {window.localStorage.getItem('priceDiff')}

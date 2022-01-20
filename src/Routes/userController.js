@@ -390,7 +390,8 @@ exports.editReservationUser = (req, res) => {
   User.findOne({
     username: req.user.user.username,
   }).then((user) => {
-    if (req.body.departure) {
+    if (req.body.departure == true || req.body.departure == 'true') {
+      console.log('THIS IS A DEPARTURE')
       user.reservations[reservationIndex].DepartureFlightSeats = req.body.seats
       if (req.body.flightNumNew !== 'null') {
         user.reservations[reservationIndex].DepartureFlightNum =

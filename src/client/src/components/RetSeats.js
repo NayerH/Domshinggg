@@ -18,6 +18,7 @@ const cabin = window.localStorage.getItem('cabin')
 const count = window.localStorage.getItem('mySeats').split(',').length
 window.localStorage.setItem('numOfPassengersEdit', count)
 const oldSeatsArr = window.localStorage.getItem('mySeats').split(',')
+console.log(oldSeatsArr)
 
 var clicksDep = 0
 
@@ -141,14 +142,14 @@ export default function RetSeats() {
   }
   const handleClickSeats = () => {
     if (seatsDep) {
-      window.location = '/confirmationDep'
+      window.location = '/confirmationRet'
     } else {
       handleClick()
     }
   }
   useEffect(async () => {
-    console.log('my seats (old):', window.localStorage.getItem('mySeats'))
     console.log('my seats (old):', window.localStorage.getItem('cabin'))
+    console.log('my seats (old):', window.localStorage.getItem('flightNumNew'))
     await axios
       .post(
         'http://localhost:3000/getSeatsEdit',
@@ -190,7 +191,7 @@ export default function RetSeats() {
         <div>
           <div>
             <h1 style={{ marginLeft: '12vw', marginTop: '1vw' }}>
-              Choose Your Departure Seats
+              Choose Your Return Seats
             </h1>
             <Typography style={{ marginLeft: '17vw', marginTop: '1vw' }}>
               *Yellow seats are your old seats*
@@ -211,7 +212,11 @@ export default function RetSeats() {
               if (seat === true) {
                 var i = 0
                 for (i; i < oldSeatsArr.length; i++) {
-                  if (parseInt(oldSeatsArr[i], 10) == index) {
+                  if (
+                    parseInt(oldSeatsArr[i], 10) == index &&
+                    window.localStorage.getItem('flightNumNew') ==
+                      window.localStorage.getItem('flightNumOld')
+                  ) {
                     return (
                       <div style={{ marginLeft: '1vw', marginTop: '0.5vw' }}>
                         <Button

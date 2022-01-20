@@ -148,6 +148,7 @@ export default function RetFlights() {
       console.log(window.localStorage.getItem('numOfPassengers'))
       window.localStorage.setItem('depFlightNum', depFlight)
       window.localStorage.setItem('cabin', cabin)
+      window.localStorage.setItem('cabinNew', cabin)
       window.localStorage.setItem(
         'numOfPassengersEdit',
         window.localStorage.getItem('numOfPassengers')
